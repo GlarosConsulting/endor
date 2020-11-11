@@ -1,0 +1,10 @@
+import ICreateCustomerDTO from '../dtos/ICreateCustomerDTO';
+import Customer from '../infra/typeorm/entities/Customer';
+
+export default interface IUsersRepository {
+  findById(id: string): Promise<Customer | undefined>;
+  findAll(): Promise<Customer[] | undefined>;
+  findByName(name: string): Promise<Customer[] | undefined>;
+  create(data: ICreateCustomerDTO): Promise<Customer>;
+  save(customer: Customer): Promise<Customer>;
+}

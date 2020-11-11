@@ -1,0 +1,42 @@
+import { getRepository, Repository } from 'typeorm';
+
+import ICreateDeceasedDTO from '@modules/deceased/dtos/ICreateDeceasedDTO';
+import IDeceasedsRepository from '@modules/deceased/repositories/IDeceasedsRepository';
+
+import Deceased from '../entities/Deceased';
+
+class DeceasedsRepository implements IDeceasedsRepository {
+  private ormRepository: Repository<Deceased>;
+
+  constructor() {
+    this.ormRepository = getRepository(Deceased);
+  }
+
+  public async findByName(name: string): Promise<Deceased[] | undefined> {
+    const deceased = await this.ormRepository.find({
+      where: { name },
+    });
+
+    return deceased;
+  }
+
+  public async findAll(): Promise<Deceased[] | undefined> {
+    const deceaseds = await this.ormRepository.find();
+
+    return deceaseds;
+  }
+
+  public async create(data: ICreateDeceasedDTO): Promise<Deceased> {
+    const deceased = this.ormRepository.create(data);
+
+    await this.ormRepository.save(deceased);
+
+    return deceased;
+  }
+
+  public async save(deceased: Deceased): Promise<Deceased> {
+    return this.ormRepository.save(deceased);
+  }
+}
+
+export default DeceasedsRepository;

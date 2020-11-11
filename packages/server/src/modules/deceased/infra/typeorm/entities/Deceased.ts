@@ -1,0 +1,53 @@
+import {
+  UpdateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  JoinColumn,
+  CreateDateColumn,
+} from 'typeorm';
+
+import Customer from '../../../../customers/infra/typeorm/entities/Customer';
+import Funeral from '../../../../funerals/infra/typeorm/entities/Funeral';
+
+@Entity('deceased')
+export default class Cemeteries {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @Column()
+  name: string;
+
+  @Column()
+  responsible_id: string;
+
+  @OneToMany(() => Customer, customer => customer.deceased)
+  @JoinColumn({ name: 'responsible_id' })
+  responsible: Customer;
+
+  @Column()
+  funeral_inital_date: Date;
+
+  @Column()
+  funeral_final_date: Date;
+
+  @Column()
+  spulting_date: Date;
+
+  @Column()
+  live_chat_link: string;
+
+  @Column()
+  funeral_id: string;
+
+  @OneToMany(() => Funeral, funeral => funeral.deceased)
+  @JoinColumn({ name: 'funeral_id' })
+  funeral: Funeral;
+
+  @CreateDateColumn()
+  created_at: Date;
+
+  @UpdateDateColumn()
+  updated_at: Date;
+}
