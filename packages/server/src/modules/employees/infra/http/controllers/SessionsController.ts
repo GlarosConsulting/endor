@@ -2,27 +2,27 @@ import { classToClass } from 'class-transformer';
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
 
-import AuthenticateUserService from '@modules/users/services/AuthenticateUserService';
-import LogOutUserService from '@modules/users/services/LogOutUserService';
-import RefreshAccessTokenService from '@modules/users/services/RefreshAccessTokenService';
+import AuthenticateUserService from '@modules/employees/services/AuthenticateEmployeeService';
+import LogOutUserService from '@modules/employees/services/LogOutUserService';
+import RefreshAccessTokenService from '@modules/employees/services/RefreshAccessTokenService';
 
 export default class SessionsController {
   public async create(request: Request, response: Response): Promise<Response> {
-    const { username, password } = request.body;
+    const { email, password } = request.body;
 
     const authenticateUser = container.resolve(AuthenticateUserService);
 
     const {
-      user,
+      employee,
       access_token,
       refresh_token,
     } = await authenticateUser.execute({
-      username,
+      email,
       password,
     });
 
     return response.json({
-      user: classToClass(user),
+      user: classToClass(employee),
       access_token,
       refresh_token,
     });

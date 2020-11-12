@@ -12,6 +12,12 @@ class EmnployeesRepository implements IEmployeesRepository {
     this.ormRepository = getRepository(Employee);
   }
 
+  public async findById(id: string): Promise<Employee | undefined> {
+    const employee = await this.ormRepository.findOne({ where: { id } });
+
+    return employee;
+  }
+
   public async findAll(): Promise<Employee[] | undefined> {
     const employee = await this.ormRepository.find();
 
@@ -21,6 +27,14 @@ class EmnployeesRepository implements IEmployeesRepository {
   public async findByName(name: string): Promise<Employee[] | undefined> {
     const employee = await this.ormRepository.find({
       where: { name },
+    });
+
+    return employee;
+  }
+
+  public async findByEmail(email: string): Promise<Employee | undefined> {
+    const employee = await this.ormRepository.findOne({
+      where: { email },
     });
 
     return employee;

@@ -22,6 +22,14 @@ class FakeEmployeesRepository implements IEmplyeesRepository {
     return findEmployees;
   }
 
+  public async findByEmail(email: string): Promise<Employee | undefined> {
+    const findEmployees = this.employees.find(
+      employee => employee.email === email,
+    );
+
+    return findEmployees;
+  }
+
   public async create(data: ICreateEmployeeDTO): Promise<Employee> {
     const employee = new Employee();
 
