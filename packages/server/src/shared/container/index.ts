@@ -1,27 +1,41 @@
 import { container } from 'tsyringe';
 
-import '@modules/users/providers';
+import '@modules/employees/providers';
 
 import './providers';
 
-import CustomersIXCRepository from '@modules/customers_ixc/infra/typeorm/repositories/CustomerIXCRepository';
-import ICustomersIXCRepository from '@modules/customers_ixc/repositories/ICustomersIXCRepository';
-import UsersRepository from '@modules/users/infra/typeorm/repositories/UsersRepository';
-import UserTokensRepository from '@modules/users/infra/typeorm/repositories/UserTokensRepository';
-import IUsersRepository from '@modules/users/repositories/IUsersRepository';
-import IUserTokensRepository from '@modules/users/repositories/IUserTokensRepository';
+import CemeteriesRepository from '@modules/cemeteries/infra/typeorm/repositories/CemeteriesRepository';
+import ICemeteriesRepository from '@modules/cemeteries/repositories/ICemeteriesRepository';
+import CustomersRepository from '@modules/customers/infra/typeorm/repositories/CustomersRepository';
+import ICustomersRepository from '@modules/customers/repositories/ICustomersRepository';
+import DeceasedRepository from '@modules/deceased/infra/typeorm/repositories/DeceasedsRepository';
+import IDeceasedRepository from '@modules/deceased/repositories/IDeceasedsRepository';
+import EmnployeesRepository from '@modules/employees/infra/typeorm/repositories/EmployeesRepository';
+import IEmployeesRepository from '@modules/employees/repositories/IEmployeesRepository';
+import FuneralsRepository from '@modules/funerals/infra/typeorm/repositories/UsersRepository';
+import IFuneralsRepository from '@modules/funerals/repositories/IFuneralsRepository';
 
-container.registerSingleton<IUsersRepository>(
-  'UsersRepository',
-  UsersRepository,
+container.registerSingleton<ICustomersRepository>(
+  'CustomersRepository',
+  CustomersRepository,
 );
 
-container.registerSingleton<IUserTokensRepository>(
-  'UserTokensRepository',
-  UserTokensRepository,
+container.registerSingleton<ICemeteriesRepository>(
+  'CemeteriesRepository',
+  CemeteriesRepository,
 );
 
-container.registerSingleton<ICustomersIXCRepository>(
-  'CustomersIXCRepository',
-  CustomersIXCRepository,
+container.registerSingleton<IDeceasedRepository>(
+  'DeceasedRepository',
+  DeceasedRepository,
+);
+
+container.registerSingleton<IEmployeesRepository>(
+  'EmployeesRepository',
+  EmnployeesRepository,
+);
+
+container.registerSingleton<IFuneralsRepository>(
+  'FuneralsRepository',
+  FuneralsRepository,
 );

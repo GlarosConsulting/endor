@@ -1,22 +1,20 @@
 import { Router } from 'express';
 
-import customersIxcRouter from '@modules/customers_ixc/infra/http/routes/customers_ixc.routes';
-import passwordRouter from '@modules/users/infra/http/routes/password.routes';
-import profileRouter from '@modules/users/infra/http/routes/profile.routes';
-import sessionsRouter from '@modules/users/infra/http/routes/sessions.routes';
-import usersRouter from '@modules/users/infra/http/routes/users.routes';
+import cemeteriesRouter from '@modules/cemeteries/infra/http/routes/cemeteries.routes';
+import employeesRouter from '@modules/employees/infra/http/routes/employees.routes';
+import profileRouter from '@modules/employees/infra/http/routes/profile.routes';
+import sessionsRouter from '@modules/employees/infra/http/routes/sessions.routes';
 
 const routes = Router();
 
+routes.use('/cemeteries', cemeteriesRouter);
+routes.use('/employees', employeesRouter);
 routes.use('/sessions', sessionsRouter);
-routes.use('/password', passwordRouter);
-routes.use('/users', usersRouter);
 routes.use('/profile', profileRouter);
-routes.use('/customers-ixc', customersIxcRouter);
 
 routes.get('/', (_request, response) =>
   response.json({
-    name: 'RealData API',
+    name: 'Endor API',
     version: '1.0.0',
   }),
 );
