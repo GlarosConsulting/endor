@@ -1,4 +1,3 @@
-export default interface ICreateUserDTO {
+export default interface ICreateCemeteryDTO {
   name: string;
-  email: string;
 }
