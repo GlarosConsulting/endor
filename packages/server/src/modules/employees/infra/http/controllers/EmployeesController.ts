@@ -4,7 +4,7 @@ import { container } from 'tsyringe';
 
 import CreateEmployeeService from '@modules/employees/services/CreateEmployeeService';
 
-export default class UsersController {
+export default class EmpoloyeesController {
   public async create(request: Request, response: Response): Promise<Response> {
     const { name, email, password } = request.body;
 
