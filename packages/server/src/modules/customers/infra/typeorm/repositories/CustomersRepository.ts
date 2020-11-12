@@ -1,4 +1,4 @@
-import { getRepository, Repository } from 'typeorm';
+import { getRepository, Like, Repository } from 'typeorm';
 
 import ICreateCustomerDTO from '@modules/customers/dtos/ICreateCustomerDTO';
 import ICustomerRepository from '@modules/customers/repositories/ICustomersRepository';
@@ -26,8 +26,14 @@ class CustomerRepository implements ICustomerRepository {
 
   public async findByName(name: string): Promise<Customer[] | undefined> {
     const customer = await this.ormRepository.find({
-      where: { name },
+      where: { name: Like(`%${name}%`) },
     });
+
+    return customer;
+  }
+
+  public async findByEmail(email: string): Promise<Customer | undefined> {
+    const customer = await this.ormRepository.findOne({ where: { email } });
 
     return customer;
   }

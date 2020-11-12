@@ -28,6 +28,14 @@ class FakeCustomersRepository implements ICustomersRepository {
     return findCustomer;
   }
 
+  public async findByEmail(email: string): Promise<Customer | undefined> {
+    const findCustomer = this.customers.find(
+      customer => customer.email === email,
+    );
+
+    return findCustomer;
+  }
+
   public async create(data: ICreateCustomerDTO): Promise<Customer> {
     const customer = new Customer();
 

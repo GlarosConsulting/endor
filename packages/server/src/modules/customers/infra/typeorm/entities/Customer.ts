@@ -10,7 +10,7 @@ import {
 
 import Deceased from '../../../../cemeteries/infra/typeorm/entities/Cemetery';
 
-@Entity('customer')
+@Entity('customers')
 export default class Customer {
   @PrimaryGeneratedColumn('uuid')
   id: string;
