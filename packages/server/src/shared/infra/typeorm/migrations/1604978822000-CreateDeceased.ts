@@ -22,7 +22,7 @@ export class CreateDeceased1604978822000 implements MigrationInterface {
             type: 'uuid',
           },
           {
-            name: 'funeral_inital_date',
+            name: 'funeral_initial_date',
             type: 'timestamp',
           },
           {
@@ -30,7 +30,7 @@ export class CreateDeceased1604978822000 implements MigrationInterface {
             type: 'timestamp',
           },
           {
-            name: 'spulting_date',
+            name: 'sepulting_date',
             type: 'timestamp',
           },
           {

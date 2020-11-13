@@ -1,4 +1,4 @@
-export default interface ICreateUserDTO {
+export default interface ICreateCustomerDTO {
   name: string;
   email: string;
   telephone: string;

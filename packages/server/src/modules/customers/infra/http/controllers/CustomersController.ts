@@ -21,7 +21,6 @@ export default class CustomersController {
       birth_date,
     });
 
-    console.log(customer);
     return response.json(classToClass(customer));
   }
 

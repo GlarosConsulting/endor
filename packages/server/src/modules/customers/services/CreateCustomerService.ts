@@ -30,7 +30,6 @@ class CreateCustomerService {
     birth_date,
   }: IRequest): Promise<Customer> {
     const checkEmailExists = await this.customersRepository.findByEmail(email);
-    console.log(checkEmailExists);
 
     if (checkEmailExists) {
       throw new AppError('Email address already used.');

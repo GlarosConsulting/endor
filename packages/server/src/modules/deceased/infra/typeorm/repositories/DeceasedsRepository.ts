@@ -1,4 +1,4 @@
-import { getRepository, Repository } from 'typeorm';
+import { getRepository, Like, Repository } from 'typeorm';
 
 import ICreateDeceasedDTO from '@modules/deceased/dtos/ICreateDeceasedDTO';
 import IDeceasedsRepository from '@modules/deceased/repositories/IDeceasedsRepository';
@@ -14,14 +14,14 @@ class DeceasedsRepository implements IDeceasedsRepository {
 
   public async findByName(name: string): Promise<Deceased[] | undefined> {
     const deceased = await this.ormRepository.find({
-      where: { name },
+      where: { name: Like(`%${name}%`) },
     });
 
     return deceased;
   }
 
   public async findAll(): Promise<Deceased[] | undefined> {
-    const deceaseds = await this.ormRepository.find();
+    const deceaseds = await this.ormRepository.find({});
 
     return deceaseds;
   }

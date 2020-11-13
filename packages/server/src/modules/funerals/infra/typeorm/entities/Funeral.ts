@@ -12,12 +12,15 @@ import Cemetery from '../../../../cemeteries/infra/typeorm/entities/Cemetery';
 import Deceased from '../../../../deceased/infra/typeorm/entities/Deceased';
 
 @Entity('funerals')
-export default class Cemeteries {
+export default class Funerals {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
   name: string;
+
+  @Column()
+  url_cam: string;
 
   @Column()
   cemetery_id: string;

@@ -12,7 +12,7 @@ import DeceasedRepository from '@modules/deceased/infra/typeorm/repositories/Dec
 import IDeceasedRepository from '@modules/deceased/repositories/IDeceasedsRepository';
 import EmnployeesRepository from '@modules/employees/infra/typeorm/repositories/EmployeesRepository';
 import IEmployeesRepository from '@modules/employees/repositories/IEmployeesRepository';
-import FuneralsRepository from '@modules/funerals/infra/typeorm/repositories/UsersRepository';
+import FuneralsRepository from '@modules/funerals/infra/typeorm/repositories/FuneralsRepository';
 import IFuneralsRepository from '@modules/funerals/repositories/IFuneralsRepository';
 
 container.registerSingleton<ICustomersRepository>(

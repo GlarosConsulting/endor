@@ -27,13 +27,13 @@ export default class Cemeteries {
   responsible: Customer;
 
   @Column()
-  funeral_inital_date: Date;
+  funeral_initial_date: Date;
 
   @Column()
   funeral_final_date: Date;
 
   @Column()
-  spulting_date: Date;
+  sepulting_date: Date;
 
   @Column()
   live_chat_link: string;

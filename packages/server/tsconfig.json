@@ -11,6 +11,10 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "allowJs": true,
+    "lib": [
+      "ES6",
+      "DOM"
+    ],
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "baseUrl": "src",

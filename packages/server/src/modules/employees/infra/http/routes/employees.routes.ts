@@ -2,14 +2,14 @@ import { celebrate, Segments, Joi } from 'celebrate';
 import { Router } from 'express';
 
 import UsersController from '../controllers/EmployeesController';
-import ensureAuthenticated from '../middlewares/ensureAuthenticated';
+// import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 
 const usersRouter = Router();
 const usersController = new UsersController();
 
 usersRouter.post(
   '/',
-  ensureAuthenticated,
+  // ensureAuthenticated,
   celebrate({
     [Segments.BODY]: {
       name: Joi.string().required(),

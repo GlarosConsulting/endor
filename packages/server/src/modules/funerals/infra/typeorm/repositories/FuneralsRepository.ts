@@ -12,6 +12,13 @@ class FuneralsRepository implements IFuneralsRepository {
     this.ormRepository = getRepository(Funeral);
   }
 
+  public async findById(id: string): Promise<Funeral | undefined> {
+    const funeral = await this.ormRepository.findOne({
+      where: { id },
+    });
+    return funeral;
+  }
+
   public async findByCemeteryId(id: string): Promise<Funeral[] | undefined> {
     const funerals = await this.ormRepository.find({
       where: { cemetery_id: id },

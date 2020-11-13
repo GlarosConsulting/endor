@@ -4,10 +4,10 @@ import { Router } from 'express';
 import CustomersController from '../controllers/CustomersController';
 import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 
-const usersRouter = Router();
+const customersRouter = Router();
 const customersController = new CustomersController();
 
-usersRouter.post(
+customersRouter.post(
   '/',
   ensureAuthenticated,
   celebrate({
@@ -23,7 +23,7 @@ usersRouter.post(
   customersController.create,
 );
 
-usersRouter.get(
+customersRouter.get(
   '/',
   ensureAuthenticated,
   celebrate({
@@ -34,4 +34,4 @@ usersRouter.get(
   customersController.index,
 );
 
-export default usersRouter;
+export default customersRouter;

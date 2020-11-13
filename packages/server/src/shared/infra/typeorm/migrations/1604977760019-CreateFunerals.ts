@@ -18,6 +18,10 @@ export class CreateFunerals1604977760019 implements MigrationInterface {
             type: 'varchar',
           },
           {
+            name: 'url_cam',
+            type: 'varchar',
+          },
+          {
             name: 'cemetery_id',
             type: 'uuid',
           },
