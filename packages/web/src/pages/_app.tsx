@@ -3,6 +3,7 @@ import React from 'react';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import '@/components/DatePicker/module.css';
+import 'react-pro-sidebar/dist/css/styles.css';
 
 import ThemeContainer from '@/contexts/theme/ThemeContainer';
 import AppProvider from '@/hooks';

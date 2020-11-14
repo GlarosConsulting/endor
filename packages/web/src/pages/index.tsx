@@ -5,10 +5,10 @@ import SEO from '@/components/SEO';
 const Home: React.FC = () => (
   <>
     <SEO
-      title="Atena Gestor"
+      title="Endor"
       image="og/boost.png"
       shouldExcludeTitleSuffix
-      description="Gestor de tarefas de licitações - Atena Gestor"
+      description="Live chats de velórios."
     />
   </>
 );

@@ -12,9 +12,9 @@ interface IContainerProps {
 
 export const Container = styled(Box)<IContainerProps>`
   --base-color: ${props => props.theme.colors.gray[500]};
-  --text-color-focused: ${props => props.theme.colors.green[800]};
+  --text-color-focused: ${props => props.theme.colors.gray[600]};
   --focused-box-shadow: 0 0 0 3px
-    ${props => transparentize(0.4, props.theme.colors.green[400])};
+    ${props => transparentize(0.4, props.theme.colors.gray[600])};
   --errored-box-shadow: 0 0 0 3px
     ${props => transparentize(0.4, props.theme.colors.red[500])};
 

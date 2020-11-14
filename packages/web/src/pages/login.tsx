@@ -1,7 +1,7 @@
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useCallback, useRef } from 'react';
-import { FiLock, FiUser } from 'react-icons/fi';
+import { FiLock, FiMail } from 'react-icons/fi';
 
 import { useToast, Button, Flex, Heading, Link } from '@chakra-ui/core';
 import { FormHandles } from '@unform/core';
@@ -14,7 +14,7 @@ import { useAuthentication } from '@/hooks/authentication';
 import getValidationErrors from '@/utils/getValidationErrors';
 
 interface IFormData {
-  username: string;
+  email: string;
   password: string;
 }
 
@@ -32,9 +32,7 @@ const Login: React.FC = () => {
       formRef.current?.setErrors({});
 
       const schema = Yup.object().shape({
-        username: Yup.string()
-          .matches(/^[a-z0-9]+([._]?[a-z0-9]+)*$/, 'Digite um usuário válido')
-          .required('Usuário obrigatório'),
+        email: Yup.string().email().required('E-mail obrigatório'),
         password: Yup.string().required('Senha obrigatória'),
       });
 
@@ -50,7 +48,7 @@ const Login: React.FC = () => {
         duration: 3000,
       });
 
-      router.replace('/app/tasks');
+      router.replace('/register/cemeteries');
     } catch (err) {
       if (err instanceof Yup.ValidationError) {
         const errors = getValidationErrors(err);
@@ -73,7 +71,7 @@ const Login: React.FC = () => {
   return (
     <>
       <SEO
-        title="Atena Gestor"
+        title="Endor"
         image="og/boost.png"
         shouldExcludeTitleSuffix
         description="Fazer login na plataforma"
@@ -85,9 +83,10 @@ const Login: React.FC = () => {
         justifyContent="center"
         alignItems="center"
         paddingX={6}
+        backgroundColor="gray.900"
       >
         <Flex
-          backgroundColor="green.200"
+          backgroundColor="gray.800"
           borderRadius="md"
           flexDirection="column"
           alignItems="stretch"
@@ -95,10 +94,10 @@ const Login: React.FC = () => {
           boxShadow="xl"
         >
           <Form ref={formRef} onSubmit={handleSubmit}>
-            <Heading marginBottom={6}>Login</Heading>
-
-            <Input name="username" icon={FiUser} placeholder="Usuário" />
-
+            <Heading color="gray.200" marginBottom={6}>
+              Login
+            </Heading>
+            <Input name="email" icon={FiMail} placeholder="E-mail" />
             <Input
               name="password"
               icon={FiLock}
@@ -108,17 +107,16 @@ const Login: React.FC = () => {
                 marginTop: 3,
               }}
             />
-
             <Button
               type="submit"
-              bg="green.400"
+              bg="gray.400"
               color="gray.800"
               _hover={{
-                bg: 'green.500',
+                bg: 'gray.500',
                 color: 'gray.900',
               }}
               _focusWithin={{
-                bg: 'green.500',
+                bg: 'gray.500',
                 color: 'gray.900',
               }}
               width="100%"
@@ -127,9 +125,8 @@ const Login: React.FC = () => {
             >
               Entrar
             </Button>
-
             <NextLink href="forgot-password">
-              <Link color="green.900">Esqueci minha senha</Link>
+              <Link color="gray.500">Esqueci minha senha</Link>
             </NextLink>
           </Form>
         </Flex>

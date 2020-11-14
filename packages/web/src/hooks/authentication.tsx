@@ -16,9 +16,7 @@ interface IUser {
   id: string;
   name: string;
   email: string;
-  username: string;
-  roles: Role[];
-  avatar_url: string;
+  role: string;
 }
 
 export default interface ISession {
@@ -30,7 +28,7 @@ export default interface ISession {
 type ICreateSessionResponse = ISession;
 
 interface ISignInCredentials {
-  username: string;
+  email: string;
   password: string;
 }
 
@@ -39,7 +37,6 @@ interface IAuthenticationContextData {
   isLoggedIn(): boolean;
   logIn(credentials: ISignInCredentials): Promise<void>;
   logOut(): void;
-  hasRole(role: Role | Role[], user?: IUser): boolean;
 }
 
 const AuthenticationContext = createContext<IAuthenticationContextData>(
@@ -54,9 +51,9 @@ const AuthenticationProvider: React.FC = ({ children }) => {
   const isLoggedIn = useCallback(() => !!data?.access_token, [data]);
 
   const logIn = useCallback(
-    async ({ username, password }: ISignInCredentials) => {
+    async ({ email, password }: ISignInCredentials) => {
       const response = await api.post<ICreateSessionResponse>('/sessions', {
-        username,
+        email,
         password,
       });
 
@@ -71,17 +68,6 @@ const AuthenticationProvider: React.FC = ({ children }) => {
     router.replace('/login');
   }, [setData]);
 
-  const hasRole = useCallback(
-    (role: Role | Role[], user: IUser = data.user) => {
-      if (!isLoggedIn()) return false;
-
-      const roles: Role[] = Array.isArray(role) ? role : [role];
-
-      return user?.roles.some(item => roles.includes(item));
-    },
-    [isLoggedIn, data],
-  );
-
   useEffect(() => {
     const route = router.asPath;
 
@@ -95,8 +81,8 @@ const AuthenticationProvider: React.FC = ({ children }) => {
       return;
     }
 
-    if (isRoute('/') || isRoute('/login') || isRoute('/app')) {
-      router.replace('/app/logs');
+    if (isRoute('/') || isRoute('/sessions') || isRoute('/app')) {
+      router.replace('/register/cemeteries');
       return;
     }
 
@@ -115,7 +101,6 @@ const AuthenticationProvider: React.FC = ({ children }) => {
         isLoggedIn,
         logIn,
         logOut,
-        hasRole,
       }}
     >
       {children}

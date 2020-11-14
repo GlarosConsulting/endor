@@ -1,4 +1,5 @@
 import { theme, DefaultTheme } from '@chakra-ui/core';
+import { color } from 'styled-system';
 
 const customTheme: DefaultTheme = {
   ...theme,
@@ -20,6 +21,18 @@ const customTheme: DefaultTheme = {
   },
   fontSizes: {
     ...theme.fontSizes,
+  },
+  colors: {
+    ...theme.colors,
+    gray: {
+      ...theme.colors.gray,
+      800: '#383838',
+      900: '#1d1d1d',
+    },
+  },
+  zIndices: {
+    ...theme.zIndices,
+    tooltip: 3600,
   },
 };
 
