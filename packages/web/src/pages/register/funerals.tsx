@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Box, Button, Flex, useToast } from '@chakra-ui/core';
 import { FormHandles } from '@unform/core';
@@ -6,6 +6,7 @@ import { Form } from '@unform/web';
 import * as Yup from 'yup';
 
 import Input from '@/components/Input';
+import Select from '@/components/Select';
 import SEO from '@/components/SEO';
 import Sidebar from '@/components/Sidebar';
 import Title from '@/components/Title';
@@ -17,30 +18,50 @@ interface IFormData {
   name: string;
   url_cam: string;
 }
+// eslint-disable-next-line
+interface Cemeteries {
+  id: string;
+  name: string;
+}
 
 const Funerals: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
 
+  const [cemeteries, setCemeteries] = useState<Cemeteries[]>(
+    [] as Cemeteries[],
+  );
   const toast = useToast();
 
-  const handleSubmit = useCallback(async (data: IFormData) => {
+  useEffect(() => {
+    api.get('cemeteries').then(response => {
+      const cemeteriesResponse: Cemeteries[] = response.data;
+
+      setCemeteries(cemeteriesResponse);
+    });
+  }, []);
+
+  const handleSubmit = useCallback(async (data: IFormData, { reset }) => {
     try {
       formRef.current?.setErrors({});
 
       const schema = Yup.object().shape({
         name: Yup.string().required('Nome obrigatório'),
+        url_cam: Yup.string().required('Link da camêra obrigatório'),
+        cemetery_id: Yup.string().required('Cemitério obrigatório'),
       });
 
       await schema.validate(data, { abortEarly: false });
 
-      await api.post('cemeteries', data);
+      await api.post('funerals', data);
 
       toast({
         status: 'success',
-        title: 'Cemitério criado com sucesso',
+        title: 'Velório criado com sucesso',
         position: 'top',
         duration: 3000,
       });
+
+      reset();
     } catch (err) {
       if (err instanceof Yup.ValidationError) {
         const errors = getValidationErrors(err);
@@ -66,7 +87,7 @@ const Funerals: React.FC = () => {
         title="Endor"
         image="og/boost.png"
         shouldExcludeTitleSuffix
-        description="Fazer login na plataforma"
+        description="Fazer o registro de velórios na plataforma"
       />
       <Flex
         as="main"
@@ -86,21 +107,35 @@ const Funerals: React.FC = () => {
           direction="column"
         >
           <Box width="100%" color="gray.200">
-            <Title css={{ color: 'gray.200' }}>Cemitérios</Title>
+            <Title css={{ color: 'gray.200' }}>Velórios</Title>
           </Box>
-
           <Flex flexDirection="column" height="100%">
             <Form
               ref={formRef}
               css={{ display: 'flex', flexDirection: 'column', height: '100%' }}
               onSubmit={handleSubmit}
             >
-              <Input
-                name="name"
-                placeholder="Nome"
-                containerProps={{ width: '100%' }}
-              />
-
+              <Flex>
+                <Input
+                  name="name"
+                  placeholder="Nome"
+                  containerProps={{ width: '33.3%' }}
+                />
+                <Input
+                  name="url_cam"
+                  placeholder="Link da camêra do velório"
+                  containerProps={{ width: '33.3%', marginLeft: 15 }}
+                />
+                <Select
+                  name="cemetery_id"
+                  containerProps={{ width: '33.3%', marginLeft: 15 }}
+                  placeholder="Cemiterios"
+                >
+                  {cemeteries.map(cemetery => (
+                    <option value={cemetery.id}>{cemetery.name}</option>
+                  ))}
+                </Select>
+              </Flex>
               <Flex marginTop={4} justifyContent="flex-end">
                 <Button
                   type="submit"

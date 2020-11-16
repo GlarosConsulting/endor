@@ -15,6 +15,7 @@ class FuneralsRepository implements IFuneralsRepository {
   public async findById(id: string): Promise<Funeral | undefined> {
     const funeral = await this.ormRepository.findOne({
       where: { id },
+      relations: ['cemetery'],
     });
     return funeral;
   }
@@ -22,13 +23,16 @@ class FuneralsRepository implements IFuneralsRepository {
   public async findByCemeteryId(id: string): Promise<Funeral[] | undefined> {
     const funerals = await this.ormRepository.find({
       where: { cemetery_id: id },
+      relations: ['cemetery'],
     });
 
     return funerals;
   }
 
   public async findAll(): Promise<Funeral[] | undefined> {
-    const funerals = await this.ormRepository.find();
+    const funerals = await this.ormRepository.find({
+      relations: ['cemetery'],
+    });
 
     return funerals;
   }

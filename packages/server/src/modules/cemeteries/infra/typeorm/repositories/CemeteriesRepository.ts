@@ -13,7 +13,9 @@ class CemeteriesRepository implements ICemeteriesRepository {
   }
 
   public async findAll(): Promise<Cemetery[] | undefined> {
-    const cemeteries = await this.ormRepository.find();
+    const cemeteries = await this.ormRepository.find({
+      relations: ['funerals'],
+    });
 
     return cemeteries;
   }

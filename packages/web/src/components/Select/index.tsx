@@ -1,28 +1,26 @@
-import React, { useRef, useState, useCallback, useEffect } from 'react';
-import { IconBaseProps } from 'react-icons';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 
 import {
-  Input as ChakraInput,
-  InputProps as ChakraInputProps,
+  Select as ChakraSelect,
+  SelectProps as ChakraSelectProps,
   PseudoBoxProps as ChakraPseudoBoxProps,
 } from '@chakra-ui/core';
 import { useField } from '@unform/core';
 
 import { Container } from './styles';
 
-interface IInputProps extends ChakraInputProps {
+interface ISelectProps extends ChakraSelectProps {
   name: string;
-  icon?: React.ComponentType<IconBaseProps>;
   containerProps?: ChakraPseudoBoxProps;
 }
 
-const Input: React.FC<IInputProps> = ({
+const ReactSelect: React.FC<ISelectProps> = ({
   name,
-  containerProps = {},
-  icon: Icon,
+  children,
+  containerProps,
   ...rest
 }) => {
-  const inputRef = useRef<HTMLInputElement>(null);
+  const selectRef = useRef<HTMLSelectElement>(null);
 
   const [isFocused, setIsFocused] = useState(false);
   const [isFilled, setIsFilled] = useState(false);
@@ -36,13 +34,13 @@ const Input: React.FC<IInputProps> = ({
   const handleInputBlur = useCallback(() => {
     setIsFocused(false);
 
-    setIsFilled(!!inputRef.current?.value);
+    setIsFilled(!!selectRef.current?.value);
   }, []);
 
   useEffect(() => {
     registerField({
       name: fieldName,
-      ref: inputRef.current,
+      ref: selectRef.current,
       path: 'value',
     });
   }, [fieldName, registerField]);
@@ -52,29 +50,31 @@ const Input: React.FC<IInputProps> = ({
       isFocused={isFocused}
       isFilled={isFilled}
       isErrored={!!error}
-      bg="gray.100"
+      bg="green.50"
       width="100%"
       height={12}
       borderRadius="md"
       paddingLeft={4}
       {...containerProps}
       onClick={() => {
-        inputRef.current.focus();
+        selectRef.current.focus();
       }}
     >
-      {Icon && <Icon size={15} />}
-
-      <ChakraInput
-        ref={inputRef}
+      <ChakraSelect
         defaultValue={defaultValue}
+        bg="green.50"
+        border={0}
         focusBorderColor={null}
         paddingLeft={0}
         onFocus={handleInputFocus}
         onBlur={handleInputBlur}
+        ref={selectRef}
         {...rest}
-      />
+      >
+        {children}
+      </ChakraSelect>
     </Container>
   );
 };
 
-export default Input;
+export default ReactSelect;

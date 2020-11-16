@@ -22,7 +22,7 @@ const Cemeteries: React.FC = () => {
 
   const toast = useToast();
 
-  const handleSubmit = useCallback(async (data: IFormData) => {
+  const handleSubmit = useCallback(async (data: IFormData, { reset }) => {
     try {
       formRef.current?.setErrors({});
 
@@ -40,6 +40,8 @@ const Cemeteries: React.FC = () => {
         position: 'top',
         duration: 3000,
       });
+
+      reset();
     } catch (err) {
       if (err instanceof Yup.ValidationError) {
         const errors = getValidationErrors(err);
@@ -65,7 +67,7 @@ const Cemeteries: React.FC = () => {
         title="Endor"
         image="og/boost.png"
         shouldExcludeTitleSuffix
-        description="Fazer login na plataforma"
+        description="Fazer o registro de cemitérios na plataforma"
       />
       <Flex
         as="main"

@@ -3,6 +3,7 @@ import {
   PrimaryGeneratedColumn,
   Column,
   OneToMany,
+  ManyToOne,
   JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
@@ -25,8 +26,8 @@ export default class Funerals {
   @Column()
   cemetery_id: string;
 
-  @OneToMany(() => Cemetery, cemetery => cemetery.funerals)
-  @JoinColumn({ name: 'cemetery.id' })
+  @ManyToOne(() => Cemetery, cemetery => cemetery.funerals)
+  @JoinColumn({ name: 'cemetery_id' })
   cemetery: Cemetery;
 
   @OneToMany(() => Deceased, deceased => deceased.id, { cascade: true })
