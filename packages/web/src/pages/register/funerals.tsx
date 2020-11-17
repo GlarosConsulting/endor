@@ -47,7 +47,7 @@ const Funerals: React.FC = () => {
       const schema = Yup.object().shape({
         name: Yup.string().required('Nome obrigatório'),
         url_cam: Yup.string().required('Link da camêra obrigatório'),
-        cemetery_id: Yup.string().required('Cemitério obrigatório'),
+        cemetery_id: Yup.string().uuid().required('Cemitério obrigatório'),
       });
 
       await schema.validate(data, { abortEarly: false });

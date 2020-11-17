@@ -1,9 +1,4 @@
-import React, {
-  /* useCallback, */ useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FiSearch, FiUserPlus } from 'react-icons/fi';
 import { Column } from 'react-table';
 
@@ -15,17 +10,21 @@ import { format } from 'date-fns';
 // eslint-disable-next-line
 import { ptBR } from 'date-fns/locale'
 
-// import * as Yup from 'yup';
-
 import Input from '@/components/Input';
-import CreateCustomerModal from '@/components/Modals/CreateCustomersModal';
+import CreateCustomersModal from '@/components/Modals/CreateCustomersModal';
+import CreateEmployeesModal from '@/components/Modals/CreateEmployeesModal';
 import SEO from '@/components/SEO';
 import Sidebar from '@/components/Sidebar';
 import Table from '@/components/Table';
-// import Title from '@/components/Title';
-// import getValidationErrors from '@/utils/getValidationErrors';
 
 import api from '../../services/api';
+
+// eslint-disable-next-line
+interface Employees {
+  name: string;
+  email: string;
+}
+
 // eslint-disable-next-line
 interface Customers {
   name: string;
@@ -73,13 +72,30 @@ const CUSTOMERS_TABLE_COLUMNS = [
   },
 ] as Column[];
 
+const EMPLOYEES_TABLE_COLUMNS = [
+  {
+    Header: 'nome',
+    accessor: 'name',
+  },
+  {
+    Header: 'E-mail',
+    accessor: 'email',
+  },
+] as Column[];
+
 const Users: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
 
   const {
-    isOpen: isCreateCustomerOpen,
+    isOpen: isCreateCustomersOpen,
     onOpen: onOpenCreateCustomer,
-    onClose: onCloseCreateCustomer,
+    onClose: onCloseCreateCustomers,
+  } = useDisclosure();
+
+  const {
+    isOpen: isCreateEmployeesOpen,
+    onOpen: onOpenCreateEmployee,
+    onClose: onCloseCreateEmployees,
   } = useDisclosure();
 
   const [userSelected, setUserSelected] = useState<'customer' | 'employee'>(
@@ -87,9 +103,9 @@ const Users: React.FC = () => {
   );
 
   const [customers, setCustomers] = useState<Customers[]>([] as Customers[]);
-  // const toast = useToast();
+  const [employees, setEmployees] = useState<Employees[]>([] as Employees[]);
 
-  useEffect(() => {
+  const getUsers = useCallback(() => {
     api.get('customers').then(response => {
       const responseData = response.data;
 
@@ -113,6 +129,16 @@ const Users: React.FC = () => {
       });
       setCustomers(customersData);
     });
+
+    api.get('employees').then(response => {
+      const responseData = response.data;
+
+      setEmployees(responseData);
+    });
+  }, []);
+
+  useEffect(() => {
+    getUsers();
   }, []);
 
   const handleChangeToEmployeeScreen = useCallback(() => {
@@ -125,9 +151,7 @@ const Users: React.FC = () => {
 
   const handleSearchUser = useCallback(async data => {
     if (data.customers_search) {
-      const response = await api.get(
-        `http://localhost:3333/customers?name=${data.customers_search}`,
-      );
+      const response = await api.get(`customers?name=${data.customers_search}`);
 
       const responseData = response.data;
 
@@ -151,12 +175,21 @@ const Users: React.FC = () => {
       });
       setCustomers(customersData);
     } else {
-      console.log();
+      if (!data.employees_search) {
+        return;
+      }
+      const response = await api.get(`employees?name=${data.employees_search}`);
+
+      setEmployees(response.data);
     }
   }, []);
 
-  const handleOpenCreateCustomerModal = useCallback(() => {
+  const handleOpenCreateCustomersModal = useCallback(() => {
     onOpenCreateCustomer();
+  }, []);
+
+  const handleOpenCreateEmployeesModal = useCallback(() => {
+    onOpenCreateEmployee();
   }, []);
 
   return (
@@ -165,7 +198,7 @@ const Users: React.FC = () => {
         title="Endor"
         image="og/boost.png"
         shouldExcludeTitleSuffix
-        description="Fazer o registro de velórios na plataforma"
+        description="Fazer o registro e pesquisa de usuários na plataforma"
       />
       <Flex
         as="main"
@@ -254,17 +287,17 @@ const Users: React.FC = () => {
                     >
                       <Button
                         marginLeft={4}
-                        type="submit"
-                        onClick={handleOpenCreateCustomerModal}
+                        onClick={handleOpenCreateCustomersModal}
                       >
                         <FiUserPlus />
                       </Button>
                     </Tooltip>
                   </Flex>
 
-                  <CreateCustomerModal
-                    isOpen={isCreateCustomerOpen}
-                    onClose={onCloseCreateCustomer}
+                  <CreateCustomersModal
+                    onSave={getUsers}
+                    isOpen={isCreateCustomersOpen}
+                    onClose={onCloseCreateCustomers}
                   />
 
                   <Flex marginTop={6}>
@@ -286,7 +319,11 @@ const Users: React.FC = () => {
                       label="Pesquisar funcionários por nome."
                       aria-label="Pesquisar funcionários por nome."
                     >
-                      <Button marginLeft={4} type="submit">
+                      <Button
+                        marginLeft={4}
+                        type="submit"
+                        onClick={handleSearchUser}
+                      >
                         <FiSearch />
                       </Button>
                     </Tooltip>
@@ -295,10 +332,26 @@ const Users: React.FC = () => {
                       label="Adicionar novo funcionário."
                       aria-label="Adicionar novo funcionário."
                     >
-                      <Button marginLeft={4} type="submit">
+                      <Button
+                        marginLeft={4}
+                        onClick={handleOpenCreateEmployeesModal}
+                      >
                         <FiUserPlus />
                       </Button>
                     </Tooltip>
+                  </Flex>
+
+                  <CreateEmployeesModal
+                    onSave={getUsers}
+                    isOpen={isCreateEmployeesOpen}
+                    onClose={onCloseCreateEmployees}
+                  />
+
+                  <Flex marginTop={6}>
+                    <Table
+                      columns={EMPLOYEES_TABLE_COLUMNS}
+                      data={employees}
+                    ></Table>
                   </Flex>
                 </>
               )}

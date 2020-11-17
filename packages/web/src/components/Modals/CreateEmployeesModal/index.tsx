@@ -15,9 +15,7 @@ import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import * as Yup from 'yup';
 
-import DatePicker from '@/components/DatePicker';
 import Input from '@/components/Input';
-import Select from '@/components/Select';
 import getValidationErrors from '@/utils/getValidationErrors';
 
 import api from '../../../services/api';
@@ -25,13 +23,11 @@ import api from '../../../services/api';
 interface IFormData {
   name: string;
   email: string;
-  telephone: string;
-  gender: string;
-  cpf: string;
-  birth_date: Date;
+  password: string;
+  passwordConfirmation: string;
 }
 
-interface ICreateCustomersModalProps {
+interface ICreateEmpployeesModalProps {
   isOpen: boolean;
   onClose?: (
     event: React.MouseEvent | React.KeyboardEvent,
@@ -40,7 +36,7 @@ interface ICreateCustomersModalProps {
   onSave: () => void;
 }
 
-const CreateCustomersModal: React.FC<ICreateCustomersModalProps> = ({
+const CreateEmpployeesModal: React.FC<ICreateEmpployeesModalProps> = ({
   isOpen,
   onClose,
   onSave,
@@ -56,21 +52,24 @@ const CreateCustomersModal: React.FC<ICreateCustomersModalProps> = ({
       const schema = Yup.object().shape({
         name: Yup.string().required('Nome obrigatório'),
         email: Yup.string().email().required('E-mail obrigatória'),
-        telephone: Yup.string().required('Telefone obrigatório'),
-        gender: Yup.string().required('Gênero obrigatório'),
-        cpf: Yup.string()
-          .length(11, 'Cpf deve ter somente 11 dígitos')
-          .required('Cpf obrigatório'),
-        birth_date: Yup.date().required('Data de nascimento obrigatória'),
+        password: Yup.string().required('Senha obrigatório'),
+        passwordConfirmation: Yup.string().oneOf(
+          [Yup.ref('password'), null],
+          'As senhas devem ser iguais',
+        ),
       });
 
       await schema.validate(data, { abortEarly: false });
 
-      await api.post('customers', data);
+      await api.post('employees', {
+        name: data.name,
+        email: data.email,
+        password: data.password,
+      });
 
       toast({
         status: 'success',
-        title: 'Cliente registrado com sucesso!',
+        title: 'Funcionário registrado com sucesso!',
         position: 'top',
         duration: 3000,
       });
@@ -88,9 +87,9 @@ const CreateCustomersModal: React.FC<ICreateCustomersModalProps> = ({
 
       toast({
         status: 'error',
-        title: 'Erro no registro do cliente',
+        title: 'Erro no registro do funcionário',
         description:
-          'Ocorreu um erro ao tentar registrar o cliente, tente novamente.',
+          'Ocorreu um erro ao tentar registrar o funcionário, tente novamente.',
         position: 'top',
         duration: 5000,
       });
@@ -102,7 +101,7 @@ const CreateCustomersModal: React.FC<ICreateCustomersModalProps> = ({
       <ModalOverlay />
 
       <ModalContent borderRadius="md">
-        <ModalHeader>Registrar cliente</ModalHeader>
+        <ModalHeader>Registrar funcionário</ModalHeader>
         <ModalCloseButton />
 
         <Form ref={formRef} onSubmit={handleSubmit}>
@@ -117,12 +116,6 @@ const CreateCustomersModal: React.FC<ICreateCustomersModalProps> = ({
               }}
             />
 
-            <DatePicker
-              name="birth_date"
-              placeholderText="Data de nascimento"
-              containerProps={{ marginTop: 3, color: 'black' }}
-            />
-
             <Input
               name="email"
               placeholder="E-mail"
@@ -135,8 +128,9 @@ const CreateCustomersModal: React.FC<ICreateCustomersModalProps> = ({
             />
 
             <Input
-              name="telephone"
-              placeholder="Telefone"
+              name="password"
+              type="password"
+              placeholder="Senha"
               containerProps={{
                 border: '1px solid',
                 borderColor: 'gray.400',
@@ -146,8 +140,9 @@ const CreateCustomersModal: React.FC<ICreateCustomersModalProps> = ({
             />
 
             <Input
-              name="cpf"
-              placeholder="CPF"
+              name="passwordConfirmation"
+              type="password"
+              placeholder="Confirme a senha do funcionário"
               containerProps={{
                 border: '1px solid',
                 borderColor: 'gray.400',
@@ -155,20 +150,6 @@ const CreateCustomersModal: React.FC<ICreateCustomersModalProps> = ({
                 marginTop: 3,
               }}
             />
-
-            <Select
-              name="gender"
-              bg="white"
-              containerProps={{
-                border: '1px solid',
-                borderColor: 'gray.400',
-                bg: 'white',
-                marginTop: 3,
-              }}
-            >
-              <option value="Masculino">Masculino</option>
-              <option value="Feminino">Feminino</option>
-            </Select>
           </ModalBody>
 
           <ModalFooter>
@@ -186,4 +167,4 @@ const CreateCustomersModal: React.FC<ICreateCustomersModalProps> = ({
   );
 };
 
-export default CreateCustomersModal;
+export default CreateEmpployeesModal;

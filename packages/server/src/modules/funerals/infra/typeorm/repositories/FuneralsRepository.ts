@@ -21,12 +21,12 @@ class FuneralsRepository implements IFuneralsRepository {
   }
 
   public async findByCemeteryId(id: string): Promise<Funeral[] | undefined> {
-    const funerals = await this.ormRepository.find({
+    const funeral = await this.ormRepository.find({
       where: { cemetery_id: id },
       relations: ['cemetery'],
     });
 
-    return funerals;
+    return funeral;
   }
 
   public async findAll(): Promise<Funeral[] | undefined> {

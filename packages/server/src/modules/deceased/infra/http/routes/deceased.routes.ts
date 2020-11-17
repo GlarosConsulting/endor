@@ -9,6 +9,7 @@ const deceasedsController = new DeceasedsController();
 
 deceasedsRouter.post(
   '/',
+  ensureAuthenticated,
   celebrate({
     [Segments.BODY]: {
       name: Joi.string().required(),

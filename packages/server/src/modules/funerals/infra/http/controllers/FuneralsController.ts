@@ -21,9 +21,9 @@ export default class FuneralsController {
   }
 
   public async index(request: Request, response: Response): Promise<Response> {
-    const listFUnerals = container.resolve(ListAllFuneralsService);
+    const listOfUnerals = container.resolve(ListAllFuneralsService);
 
-    const fuenrals = await listFUnerals.execute();
+    const fuenrals = await listOfUnerals.execute();
 
     return response.json(classToClass(fuenrals));
   }
