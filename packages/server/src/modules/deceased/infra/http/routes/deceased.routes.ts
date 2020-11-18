@@ -2,10 +2,12 @@ import { celebrate, Segments, Joi } from 'celebrate';
 import { Router } from 'express';
 
 import DeceasedsController from '../controllers/DeceasedsController';
+import FindByDeceasedIdController from '../controllers/FindByDeceasedIdController';
 import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 
 const deceasedsRouter = Router();
 const deceasedsController = new DeceasedsController();
+const findByDeceasedIdController = new FindByDeceasedIdController();
 
 deceasedsRouter.post(
   '/',
@@ -32,6 +34,17 @@ deceasedsRouter.get(
     },
   }),
   deceasedsController.index,
+);
+
+deceasedsRouter.get(
+  '/:id',
+  ensureAuthenticated,
+  celebrate({
+    [Segments.QUERY]: {
+      name: Joi.string().allow(null),
+    },
+  }),
+  findByDeceasedIdController.index,
 );
 
 export default deceasedsRouter;

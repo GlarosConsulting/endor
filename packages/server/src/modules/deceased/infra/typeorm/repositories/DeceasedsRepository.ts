@@ -29,6 +29,15 @@ class DeceasedsRepository implements IDeceasedsRepository {
     return deceaseds;
   }
 
+  public async findById(id: string): Promise<Deceased | undefined> {
+    const deceased = await this.ormRepository.findOne({
+      where: { id },
+      relations: ['responsible', 'funeral', 'funeral.cemetery'],
+    });
+
+    return deceased;
+  }
+
   public async create(data: ICreateDeceasedDTO): Promise<Deceased> {
     const deceased = this.ormRepository.create(data);
 
