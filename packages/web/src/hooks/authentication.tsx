@@ -81,7 +81,7 @@ const AuthenticationProvider: React.FC = ({ children }) => {
       return;
     }
 
-    if (isRoute('/') || isRoute('/sessions') || isRoute('/app')) {
+    if (isRoute('/') || isRoute('/login') || isRoute('/app')) {
       router.replace('/register/cemeteries');
       return;
     }

@@ -1,5 +1,4 @@
 import React, { useCallback, useRef } from 'react';
-import { FiAlignLeft, FiBookmark, FiHash, FiTag } from 'react-icons/fi';
 
 import {
   Button,
@@ -18,59 +17,66 @@ import * as Yup from 'yup';
 
 import DatePicker from '@/components/DatePicker';
 import Input from '@/components/Input';
-import { useTasks } from '@/hooks/tasks';
+import Select from '@/components/Select';
 import getValidationErrors from '@/utils/getValidationErrors';
 
+import api from '../../../services/api';
+
 interface IFormData {
-  instrument: string;
-  date: Date;
-  status: string;
-  task: string;
-  details: string;
+  name: string;
+  email: string;
+  telephone: string;
+  gender: string;
+  cpf: string;
+  birth_date: Date;
 }
 
-interface ICreateTaskModalProps {
+interface ICreateCustomersModalProps {
   isOpen: boolean;
   onClose?: (
     event: React.MouseEvent | React.KeyboardEvent,
     reason?: 'pressedEscape' | 'clickedOverlay',
   ) => void;
+  onSave: () => void;
 }
 
-const CreateTaskModal: React.FC<ICreateTaskModalProps> = ({
+const CreateCustomersModal: React.FC<ICreateCustomersModalProps> = ({
   isOpen,
   onClose,
+  onSave,
 }) => {
   const formRef = useRef<FormHandles>(null);
 
   const toast = useToast();
-
-  const { createTask } = useTasks();
 
   const handleSubmit = useCallback(async (data: IFormData, event) => {
     try {
       formRef.current?.setErrors({});
 
       const schema = Yup.object().shape({
-        instrument: Yup.string().required('Instrumento obrigatório'),
-        date: Yup.date().required('Data obrigatória'),
-        status: Yup.string().required('Instrumento obrigatório'),
-        task: Yup.string().required('Instrumento obrigatório'),
-        details: Yup.string().required('Instrumento obrigatório'),
+        name: Yup.string().required('Nome obrigatório'),
+        email: Yup.string().email().required('E-mail obrigatória'),
+        telephone: Yup.string().required('Telefone obrigatório'),
+        gender: Yup.string().required('Gênero obrigatório'),
+        cpf: Yup.string()
+          .length(11, 'Cpf deve ter somente 11 dígitos')
+          .required('Cpf obrigatório'),
+        birth_date: Yup.date().required('Data de nascimento obrigatória'),
       });
 
       await schema.validate(data, { abortEarly: false });
 
-      await createTask(data);
+      await api.post('customers', data);
 
       toast({
         status: 'success',
-        title: 'Tarefa criada com sucesso!',
+        title: 'Cliente registrado com sucesso!',
         position: 'top',
         duration: 3000,
       });
 
       onClose(event);
+      onSave();
     } catch (err) {
       if (err instanceof Yup.ValidationError) {
         const errors = getValidationErrors(err);
@@ -82,9 +88,9 @@ const CreateTaskModal: React.FC<ICreateTaskModalProps> = ({
 
       toast({
         status: 'error',
-        title: 'Erro na criação da tarefa',
+        title: 'Erro no registro do cliente',
         description:
-          'Ocorreu um erro ao tentar criar a tarefa, tente novamente.',
+          'Ocorreu um erro ao tentar registrar o cliente, tente novamente.',
         position: 'top',
         duration: 5000,
       });
@@ -96,15 +102,14 @@ const CreateTaskModal: React.FC<ICreateTaskModalProps> = ({
       <ModalOverlay />
 
       <ModalContent borderRadius="md">
-        <ModalHeader>Criar tarefa</ModalHeader>
+        <ModalHeader>Registrar cliente</ModalHeader>
         <ModalCloseButton />
 
         <Form ref={formRef} onSubmit={handleSubmit}>
           <ModalBody paddingBottom={4}>
             <Input
-              name="instrument"
-              icon={FiHash}
-              placeholder="Instrumento"
+              name="name"
+              placeholder="Nome"
               containerProps={{
                 border: '1px solid',
                 borderColor: 'gray.400',
@@ -112,12 +117,15 @@ const CreateTaskModal: React.FC<ICreateTaskModalProps> = ({
               }}
             />
 
-            <DatePicker name="date" containerProps={{ marginTop: 3 }} />
+            <DatePicker
+              name="birth_date"
+              placeholderText="Data de nascimento"
+              containerProps={{ marginTop: 3, color: 'black' }}
+            />
 
             <Input
-              name="status"
-              icon={FiBookmark}
-              placeholder="Fase"
+              name="email"
+              placeholder="E-mail"
               containerProps={{
                 border: '1px solid',
                 borderColor: 'gray.400',
@@ -127,9 +135,8 @@ const CreateTaskModal: React.FC<ICreateTaskModalProps> = ({
             />
 
             <Input
-              name="task"
-              icon={FiTag}
-              placeholder="Tarefa"
+              name="telephone"
+              placeholder="Telefone"
               containerProps={{
                 border: '1px solid',
                 borderColor: 'gray.400',
@@ -139,9 +146,8 @@ const CreateTaskModal: React.FC<ICreateTaskModalProps> = ({
             />
 
             <Input
-              name="details"
-              icon={FiAlignLeft}
-              placeholder="Detalhes"
+              name="cpf"
+              placeholder="CPF"
               containerProps={{
                 border: '1px solid',
                 borderColor: 'gray.400',
@@ -149,6 +155,20 @@ const CreateTaskModal: React.FC<ICreateTaskModalProps> = ({
                 marginTop: 3,
               }}
             />
+
+            <Select
+              name="gender"
+              bg="white"
+              containerProps={{
+                border: '1px solid',
+                borderColor: 'gray.400',
+                bg: 'white',
+                marginTop: 3,
+              }}
+            >
+              <option value="Masculino">Masculino</option>
+              <option value="Feminino">Feminino</option>
+            </Select>
           </ModalBody>
 
           <ModalFooter>
@@ -166,4 +186,4 @@ const CreateTaskModal: React.FC<ICreateTaskModalProps> = ({
   );
 };
 
-export default CreateTaskModal;
+export default CreateCustomersModal;

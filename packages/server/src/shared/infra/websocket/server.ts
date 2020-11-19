@@ -15,11 +15,16 @@ export default class WebSocket {
     const io: socketio.Server = await this.webSocketProvider.create(server);
 
     io.on('connection', socket => {
-      const { user_id } = socket.handshake.query;
+      const { name } = socket.handshake.query;
 
-      this.webSocketProvider.connect(user_id, socket.id);
+      this.webSocketProvider.connect(name, socket.id);
+
+      socket.on('fodase', room => {
+        console.log(room);
+      });
 
       socket.on('join', room => {
+        console.log(name, room);
         socket.join(room);
       });
 
@@ -28,7 +33,7 @@ export default class WebSocket {
       });
 
       socket.on('disconnect', () => {
-        this.webSocketProvider.disconnect(user_id);
+        this.webSocketProvider.disconnect(name);
       });
     });
   }

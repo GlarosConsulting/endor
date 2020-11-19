@@ -1,15 +1,15 @@
 import { celebrate, Segments, Joi } from 'celebrate';
 import { Router } from 'express';
 
-import UsersController from '../controllers/EmployeesController';
-// import ensureAuthenticated from '../middlewares/ensureAuthenticated';
+import EmployeesController from '../controllers/EmployeesController';
+import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 
-const usersRouter = Router();
-const usersController = new UsersController();
+const employeesRouter = Router();
+const employeesController = new EmployeesController();
 
-usersRouter.post(
+employeesRouter.post(
   '/',
-  // ensureAuthenticated,
+  ensureAuthenticated,
   celebrate({
     [Segments.BODY]: {
       name: Joi.string().required(),
@@ -17,7 +17,18 @@ usersRouter.post(
       password: Joi.string().min(6).required(),
     },
   }),
-  usersController.create,
+  employeesController.create,
 );
 
-export default usersRouter;
+employeesRouter.get(
+  '/',
+  ensureAuthenticated,
+  celebrate({
+    [Segments.QUERY]: {
+      name: Joi.string().allow(null),
+    },
+  }),
+  employeesController.index,
+);
+
+export default employeesRouter;

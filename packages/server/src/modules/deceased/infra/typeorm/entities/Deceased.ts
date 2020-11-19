@@ -3,7 +3,7 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  OneToMany,
+  ManyToOne,
   JoinColumn,
   CreateDateColumn,
 } from 'typeorm';
@@ -22,7 +22,7 @@ export default class Cemeteries {
   @Column()
   responsible_id: string;
 
-  @OneToMany(() => Customer, customer => customer.deceased)
+  @ManyToOne(() => Customer, customer => customer.deceased)
   @JoinColumn({ name: 'responsible_id' })
   responsible: Customer;
 
@@ -41,7 +41,7 @@ export default class Cemeteries {
   @Column()
   funeral_id: string;
 
-  @OneToMany(() => Funeral, funeral => funeral.deceased)
+  @ManyToOne(() => Funeral, funeral => funeral.deceased)
   @JoinColumn({ name: 'funeral_id' })
   funeral: Funeral;
 

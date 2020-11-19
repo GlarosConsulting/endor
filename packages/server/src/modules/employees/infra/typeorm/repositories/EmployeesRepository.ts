@@ -1,4 +1,4 @@
-import { getRepository, Repository } from 'typeorm';
+import { getRepository, Like, Repository } from 'typeorm';
 
 import ICreateEmployeeDTO from '@modules/employees/dtos/ICreateEmployeeDTO';
 import IEmployeesRepository from '@modules/employees/repositories/IEmployeesRepository';
@@ -26,7 +26,7 @@ class EmnployeesRepository implements IEmployeesRepository {
 
   public async findByName(name: string): Promise<Employee[] | undefined> {
     const employee = await this.ormRepository.find({
-      where: { name },
+      where: { name: Like(`%${name}%`) },
     });
 
     return employee;
