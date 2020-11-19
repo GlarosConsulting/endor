@@ -67,11 +67,13 @@ interface ICreateDeceasedModalProps {
     event: React.MouseEvent | React.KeyboardEvent,
     reason?: 'pressedEscape' | 'clickedOverlay',
   ) => void;
+  onSave: () => void;
 }
 
 const CreateDeceasedModal: React.FC<ICreateDeceasedModalProps> = ({
   isOpen,
   onClose,
+  onSave,
 }) => {
   const formRef = useRef<FormHandles>(null);
 
@@ -152,12 +154,12 @@ const CreateDeceasedModal: React.FC<ICreateDeceasedModalProps> = ({
         funeral_id: data.funeral_id,
       };
 
-      const response: { data: { live_chat_link: string } } = await api.post(
+      const response: { data: { id: string } } = await api.post(
         'deceaseds',
         submitData,
       );
 
-      const live_link = response.data.live_chat_link;
+      const live_link = `http://localhost:3000/live?id=${response.data.id}`;
 
       if (!live_link) {
         toast({
@@ -168,14 +170,17 @@ const CreateDeceasedModal: React.FC<ICreateDeceasedModalProps> = ({
           position: 'top',
           duration: 5000,
         });
+
         onClose(event);
         setFunerals([]);
         setRequestStatus(null);
+
         return;
       }
 
       setCreatedLink(live_link);
       setRequestStatus('Finished');
+      onSave();
     } catch (err) {
       if (err instanceof Yup.ValidationError) {
         const errors = getValidationErrors(err);

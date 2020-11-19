@@ -139,7 +139,7 @@ const Users: React.FC = () => {
 
   useEffect(() => {
     getUsers();
-  }, []);
+  }, [getUsers]);
 
   const handleChangeToEmployeeScreen = useCallback(() => {
     setUserSelected('employee');

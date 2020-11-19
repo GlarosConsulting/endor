@@ -89,7 +89,7 @@ const Users: React.FC = () => {
 
   const [deceased, setDeceased] = useState([]);
 
-  useEffect(() => {
+  const getDeceased = useCallback(() => {
     api.get('deceaseds').then(response => {
       const deceaseds = response.data;
       const deceasedData: Deceased[] = [];
@@ -126,6 +126,10 @@ const Users: React.FC = () => {
       setDeceased(deceasedData);
     });
   }, []);
+
+  useEffect(() => {
+    getDeceased();
+  }, [getDeceased]);
 
   const handleSearchDeceased = useCallback(async (data, { reset }) => {
     if (!data.deceased_search) {
@@ -228,6 +232,7 @@ const Users: React.FC = () => {
               </Tooltip>
 
               <CreateDeceasedModal
+                onSave={getDeceased}
                 isOpen={isCreateDeceasedOpen}
                 onClose={onCloseCreateDeceased}
               />

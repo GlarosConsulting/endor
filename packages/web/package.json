@@ -33,6 +33,7 @@
     "react-responsive": "^8.1.0",
     "react-spring": "^8.0.27",
     "react-table": "^7.5.2",
+    "socket.io-client": "2.3.0",
     "styled-system": "^5.1.5",
     "yup": "^0.29.3"
   },

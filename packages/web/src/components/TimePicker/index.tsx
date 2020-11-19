@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 
+import { PseudoBoxProps as ChakraPseudoBoxProps } from '@chakra-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import TextField, { TextFieldProps } from '@material-ui/core/TextField';
 import { useField } from '@unform/core';
