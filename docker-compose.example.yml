@@ -11,7 +11,7 @@ services:
     environment:
       - POSTGRESQL_USERNAME=postgres
       - POSTGRESQL_PASSWORD=docker
-      - POSTGRESQL_DATABASE=realdata
+      - POSTGRESQL_DATABASE=endor
     volumes:
       - 'postgresql_data:/bitnami/postgresql'
 
@@ -23,7 +23,7 @@ services:
     environment:
       - MONGODB_USERNAME=atena
       - MONGODB_PASSWORD=mongo_password_development
-      - MONGODB_DATABASE=realdata
+      - MONGODB_DATABASE=endor
     volumes:
       - 'mongodb_data:/bitnami/mongodb'
 

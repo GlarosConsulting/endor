@@ -11,10 +11,8 @@ import {
   Tooltip,
   useDisclosure,
 } from '@chakra-ui/core';
-// eslint-disable-next-line
 import { format } from 'date-fns';
-// eslint-disable-next-line
-import { ptBR } from 'date-fns/locale'
+import { ptBR } from 'date-fns/locale';
 import isUuid from 'is-uuid';
 import io from 'socket.io-client';
 
@@ -48,6 +46,7 @@ interface Deceased {
 
 const Live: React.FC = () => {
   const router = useRouter();
+
   const [deceased, setDeceased] = useState<Deceased>({} as Deceased);
   const [username, setUsername] = useState<string>('');
   const [message, setMessage] = useState<string>('');
@@ -59,51 +58,46 @@ const Live: React.FC = () => {
     onClose: onCloseGetUsernameModal,
   } = useDisclosure();
 
-  const queryKey = 'id';
-  const queryValue =
-    router.query[queryKey] ||
-    router.asPath.match(new RegExp(`[&?]${queryKey}=(.*)(&|$)`));
-
-  let socket;
-
   const onSaveUsername = useCallback(
-    name => {
+    (name: string) => {
       setUsername(name);
-      onCloseGetUsernameModal();
 
-      socket = io('http://localhost:3333', {
-        query: { username: name },
-      });
+      onCloseGetUsernameModal();
 
       console.log(deceased);
 
-      socket.emit('join', `${deceased.id}`);
+      const socket = io(process.env.NEXT_PUBLIC_API_URL, {
+        query: { username: name },
+      });
 
-      socket.on('new-message', msg => {
+      socket.emit('join', deceased.id);
+
+      socket.on('new-message', (msg: IMessage) => {
         console.log('msg');
-        setMessages(msg);
+        setMessages([...messages, msg]);
       });
     },
-    [deceased, onCloseGetUsernameModal, setUsername],
+    [deceased],
   );
 
   useEffect(() => {
-    if (!queryValue) {
-      router.replace('/login');
-    } else if (typeof queryValue !== 'string') {
-      if (!isUuid.v4(queryValue[1])) {
-        console.log('não é uuid');
-      } else {
-        onOpenGetUsernameModal();
-        api.get(`deceaseds/${queryValue[1]}`).then(response => {
-          const { data } = response;
-          setDeceased(data);
-        });
-      }
-    } else if (!isUuid.v4(queryValue)) {
-      router.replace('/login');
+    const queryId = router.query.id as string;
+
+    if (queryId === undefined) {
+      return;
     }
-  }, [queryValue, username, setDeceased]);
+
+    if (!queryId.length || !isUuid.v4(queryId)) {
+      router.replace('/login');
+      return;
+    }
+
+    onOpenGetUsernameModal();
+
+    api.get(`deceaseds/${queryId}`).then(response => {
+      setDeceased(response.data);
+    });
+  }, [router.query.id]);
 
   const handleSubmitMessage = useCallback(async () => {
     const messagedata = {
