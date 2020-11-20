@@ -58,28 +58,6 @@ const Live: React.FC = () => {
     onClose: onCloseGetUsernameModal,
   } = useDisclosure();
 
-  const onSaveUsername = useCallback(
-    (name: string) => {
-      setUsername(name);
-
-      onCloseGetUsernameModal();
-
-      console.log(deceased);
-
-      const socket = io(process.env.NEXT_PUBLIC_API_URL, {
-        query: { username: name },
-      });
-
-      socket.emit('join', deceased.id);
-
-      socket.on('new-message', (msg: IMessage) => {
-        console.log('msg');
-        setMessages([...messages, msg]);
-      });
-    },
-    [deceased],
-  );
-
   useEffect(() => {
     const queryId = router.query.id as string;
 
@@ -99,19 +77,35 @@ const Live: React.FC = () => {
     });
   }, [router.query.id]);
 
+  const onSaveUsername = useCallback(
+    (name: string) => {
+      setUsername(name);
+
+      onCloseGetUsernameModal();
+
+      const socket = io(process.env.NEXT_PUBLIC_API_URL, {
+        query: { username: name },
+      });
+
+      socket.emit('join', deceased.id);
+
+      socket.on('new', (msg: IMessage) => {
+        setMessages(state => [...state, msg]);
+      });
+    },
+    [deceased],
+  );
+
   const handleSubmitMessage = useCallback(async () => {
-    const messagedata = {
+    setMessage('');
+
+    const messageData = {
       sender: username,
       content: message,
       channel: deceased.id,
     };
 
-    const response = await api.post('/messages', messagedata);
-
-    const newMessage: IMessage = response.data;
-
-    setMessages([...messages, newMessage]);
-    setMessage('');
+    await api.post('/messages', messageData);
   }, [message, username, deceased]);
 
   return (

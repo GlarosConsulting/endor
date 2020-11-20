@@ -19,12 +19,7 @@ export default class WebSocket {
 
       this.webSocketProvider.connect(username, socket.id);
 
-      socket.on('fodase', room => {
-        console.log(room);
-      });
-
       socket.on('join', room => {
-        console.log(username, room);
         socket.join(room);
       });
 
