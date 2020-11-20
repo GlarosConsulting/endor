@@ -8,12 +8,12 @@ export default class MessagesController {
     const { sender, content, channel } = request.body;
 
     const createMessage = container.resolve(CreateMesssagesService);
-
     const message = createMessage.execute({
       sender,
       content,
       channel,
     });
+    console.log(message);
 
     return response.json(message);
   }

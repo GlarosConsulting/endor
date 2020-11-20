@@ -16,7 +16,7 @@ import { format } from 'date-fns';
 // eslint-disable-next-line
 import { ptBR } from 'date-fns/locale'
 import isUuid from 'is-uuid';
-import { io } from 'socket.io-client';
+import io from 'socket.io-client';
 
 import MessageBox from '@/components/MessageBox';
 import SetUsernameForLiveTelespectors from '@/components/Modals/SetUsernameForLiveTelespectors';
@@ -66,22 +66,26 @@ const Live: React.FC = () => {
 
   let socket;
 
-  const onSaveUsername = useCallback(name => {
-    if (typeof name === 'string') {
+  const onSaveUsername = useCallback(
+    name => {
       setUsername(name);
       onCloseGetUsernameModal();
 
-      console.log(socket);
+      socket = io('http://localhost:3333', {
+        query: { username: name },
+      });
 
-      socket.emit('join', deceased.id);
-      socket.emit('fodase', 'hdjshjds');
+      console.log(deceased);
+
+      socket.emit('join', `${deceased.id}`);
 
       socket.on('new-message', msg => {
         console.log('msg');
         setMessages(msg);
       });
-    }
-  }, []);
+    },
+    [deceased, onCloseGetUsernameModal, setUsername],
+  );
 
   useEffect(() => {
     if (!queryValue) {
@@ -94,10 +98,6 @@ const Live: React.FC = () => {
         api.get(`deceaseds/${queryValue[1]}`).then(response => {
           const { data } = response;
           setDeceased(data);
-        });
-
-        socket = io(process.env.NEXT_PUBLIC_API_URL, {
-          query: { username },
         });
       }
     } else if (!isUuid.v4(queryValue)) {
