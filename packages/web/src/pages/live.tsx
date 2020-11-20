@@ -11,12 +11,10 @@ import {
   Tooltip,
   useDisclosure,
 } from '@chakra-ui/core';
-// eslint-disable-next-line
 import { format } from 'date-fns';
-// eslint-disable-next-line
-import { ptBR } from 'date-fns/locale'
+import { ptBR } from 'date-fns/locale';
 import isUuid from 'is-uuid';
-import { io } from 'socket.io-client';
+import io from 'socket.io-client';
 
 import MessageBox from '@/components/MessageBox';
 import SetUsernameForLiveTelespectors from '@/components/Modals/SetUsernameForLiveTelespectors';
@@ -48,6 +46,7 @@ interface Deceased {
 
 const Live: React.FC = () => {
   const router = useRouter();
+
   const [deceased, setDeceased] = useState<Deceased>({} as Deceased);
   const [username, setUsername] = useState<string>('');
   const [message, setMessage] = useState<string>('');
@@ -59,65 +58,54 @@ const Live: React.FC = () => {
     onClose: onCloseGetUsernameModal,
   } = useDisclosure();
 
-  const queryKey = 'id';
-  const queryValue =
-    router.query[queryKey] ||
-    router.asPath.match(new RegExp(`[&?]${queryKey}=(.*)(&|$)`));
+  useEffect(() => {
+    const queryId = router.query.id as string;
 
-  let socket;
+    if (queryId === undefined) {
+      return;
+    }
 
-  const onSaveUsername = useCallback(name => {
-    if (typeof name === 'string') {
+    if (!queryId.length || !isUuid.v4(queryId)) {
+      router.replace('/login');
+      return;
+    }
+
+    onOpenGetUsernameModal();
+
+    api.get(`deceaseds/${queryId}`).then(response => {
+      setDeceased(response.data);
+    });
+  }, [router.query.id]);
+
+  const onSaveUsername = useCallback(
+    (name: string) => {
       setUsername(name);
+
       onCloseGetUsernameModal();
 
-      console.log(socket);
+      const socket = io(process.env.NEXT_PUBLIC_API_URL, {
+        query: { username: name },
+      });
 
       socket.emit('join', deceased.id);
-      socket.emit('fodase', 'hdjshjds');
 
-      socket.on('new-message', msg => {
-        console.log('msg');
-        setMessages(msg);
+      socket.on('new', (msg: IMessage) => {
+        setMessages(state => [...state, msg]);
       });
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!queryValue) {
-      router.replace('/login');
-    } else if (typeof queryValue !== 'string') {
-      if (!isUuid.v4(queryValue[1])) {
-        console.log('não é uuid');
-      } else {
-        onOpenGetUsernameModal();
-        api.get(`deceaseds/${queryValue[1]}`).then(response => {
-          const { data } = response;
-          setDeceased(data);
-        });
-
-        socket = io(process.env.NEXT_PUBLIC_API_URL, {
-          query: { username },
-        });
-      }
-    } else if (!isUuid.v4(queryValue)) {
-      router.replace('/login');
-    }
-  }, [queryValue, username, setDeceased]);
+    },
+    [deceased],
+  );
 
   const handleSubmitMessage = useCallback(async () => {
-    const messagedata = {
+    setMessage('');
+
+    const messageData = {
       sender: username,
       content: message,
       channel: deceased.id,
     };
 
-    const response = await api.post('/messages', messagedata);
-
-    const newMessage: IMessage = response.data;
-
-    setMessages([...messages, newMessage]);
-    setMessage('');
+    await api.post('/messages', messageData);
   }, [message, username, deceased]);
 
   return (

@@ -36,7 +36,7 @@ export default class CreateMessageService {
 
     this.webSocketProvider.emit({
       to: channel,
-      event: 'new-message',
+      event: 'new',
       args: message,
     });
 

@@ -1,7 +1,7 @@
 import { Router } from 'express';
 
 import cemeteriesRouter from '@modules/cemeteries/infra/http/routes/cemeteries.routes';
-import messagesRouter from '@modules/chat/infra/socket/routes/routes';
+import messagesRouter from '@modules/chat/infra/http/routes/messages.routes';
 import customersRouter from '@modules/customers/infra/http/routes/customers.routes';
 import deceasedsRouter from '@modules/deceased/infra/http/routes/deceased.routes';
 import employeesRouter from '@modules/employees/infra/http/routes/employees.routes';
@@ -19,6 +19,7 @@ routes.use('/sessions', sessionsRouter);
 routes.use('/profile', profileRouter);
 routes.use('/funerals', funeralsRouter);
 routes.use('/messages', messagesRouter);
+
 routes.get('/', (_request, response) =>
   response.json({
     name: 'Endor API',

@@ -39,13 +39,12 @@ class SocketIOWebSocketProvider implements IWebSocketProvider {
 
   public async connect(username: string, socket_id: string): Promise<void> {
     const connections = await this.getConnections();
-
     connections[username] = socket_id;
 
     await this.cacheProvider.save(webSocketConfig.cacheKey, connections);
 
-    console.log('\nNew connection in the channel, socket:', socket_id);
-    console.log('Connections: ', connections);
+    // console.log('\nNew connection in the channel, socket:', socket_id);
+    // console.log('Connections: ', connections);
   }
 
   public async disconnect(user_id: string): Promise<void> {
