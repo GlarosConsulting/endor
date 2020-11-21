@@ -159,7 +159,7 @@ const CreateDeceasedModal: React.FC<ICreateDeceasedModalProps> = ({
         submitData,
       );
 
-      const live_link = `http://localhost:3000/live?id=${response.data.id}`;
+      const live_link = `${process.env.NEXT_PUBLIC_SITE_URL}/live?id=${response.data.id}`;
 
       if (!live_link) {
         toast({

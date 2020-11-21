@@ -38,7 +38,6 @@ deceasedsRouter.get(
 
 deceasedsRouter.get(
   '/:id',
-  ensureAuthenticated,
   celebrate({
     [Segments.QUERY]: {
       name: Joi.string().allow(null),
