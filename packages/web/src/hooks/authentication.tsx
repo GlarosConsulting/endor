@@ -74,10 +74,9 @@ const AuthenticationProvider: React.FC = ({ children }) => {
     const isRoute = (name: string) => route.split('?')[0] === name;
 
     if (!isLoggedIn()) {
-      if (!isRoute('/login')) {
+      if (!isRoute('/login') && !isRoute('/live')) {
         router.replace('/login');
       }
-
       return;
     }
 
