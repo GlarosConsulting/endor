@@ -7,5 +7,6 @@ const messagesRouter = Router();
 const messagesController = new MessagesController();
 
 messagesRouter.post('/', messagesController.create);
+messagesRouter.get('/:channel', messagesController.index);
 
 export default messagesRouter;
