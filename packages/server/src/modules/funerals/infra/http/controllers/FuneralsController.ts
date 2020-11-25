@@ -4,6 +4,7 @@ import { container } from 'tsyringe';
 
 import CreateFuneralService from '@modules/funerals/services/CreateFuneralService';
 import ListAllFuneralsService from '@modules/funerals/services/ListAllFuneralsService';
+import UpdateFuneralService from '@modules/funerals/services/UpdateFuneralService';
 
 export default class FuneralsController {
   public async create(request: Request, response: Response): Promise<Response> {
@@ -15,6 +16,20 @@ export default class FuneralsController {
       name,
       url_cam,
       cemetery_id,
+    });
+
+    return response.json(funeral);
+  }
+
+  public async update(request: Request, response: Response): Promise<Response> {
+    const { id, name, url_cam } = request.body;
+
+    const updateFuneral = container.resolve(UpdateFuneralService);
+
+    const funeral = await updateFuneral.execute({
+      id,
+      name,
+      url_cam,
     });
 
     return response.json(funeral);

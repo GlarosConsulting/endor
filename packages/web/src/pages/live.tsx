@@ -219,6 +219,8 @@ const Live: React.FC = () => {
                           "'Sepultamento: 'dd'/'MM'/'yyyy 'às' HH:mm",
                           { locale: ptBR },
                         )}
+                        {' no '}
+                        {deceased.funeral.cemetery.name}
                       </Text>
                     </Flex>
                   </>

@@ -121,7 +121,7 @@ const Users: React.FC = () => {
         customersData.push({
           name: data.name,
           cpf: data.cpf,
-          email: data.cpf,
+          email: data.email,
           gender: data.gender,
           telephone: data.telephone,
           birth_date_formatted,
@@ -167,7 +167,7 @@ const Users: React.FC = () => {
         customersData.push({
           name: customersResponseData.name,
           cpf: customersResponseData.cpf,
-          email: customersResponseData.cpf,
+          email: customersResponseData.email,
           gender: customersResponseData.gender,
           telephone: customersResponseData.telephone,
           birth_date_formatted,

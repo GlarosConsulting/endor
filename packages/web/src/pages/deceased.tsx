@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+  ReactElement,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { FiSearch, FiUserPlus } from 'react-icons/fi';
 import { Column } from 'react-table';
 
@@ -21,6 +27,7 @@ import api from '../services/api';
 
 // eslint-disable-next-line
 interface Deceased {
+  link: ReactElement;
   name: string;
   funeral_initial_date_formatted: string;
   funeral_final_date_formatted: string;
@@ -32,6 +39,7 @@ interface Deceased {
 
 // eslint-disable-next-line
 interface DeceasedResponseData {
+  id: string;
   name: string;
   funeral_initial_date: string;
   funeral_final_date: string;
@@ -48,6 +56,10 @@ interface DeceasedResponseData {
 }
 
 const DECEASED_TABLE_COLUMNS = [
+  {
+    Header: 'Link da live',
+    accessor: 'link',
+  },
   {
     Header: 'Nome',
     accessor: 'name',
@@ -78,7 +90,7 @@ const DECEASED_TABLE_COLUMNS = [
   },
 ] as Column[];
 
-const Users: React.FC = () => {
+const Deceased: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
 
   const {
@@ -88,6 +100,10 @@ const Users: React.FC = () => {
   } = useDisclosure();
 
   const [deceased, setDeceased] = useState([]);
+
+  const copyToClipboard = useCallback((value: string) => {
+    navigator.clipboard.writeText(value);
+  }, []);
 
   const getDeceased = useCallback(() => {
     api.get('deceaseds').then(response => {
@@ -114,13 +130,24 @@ const Users: React.FC = () => {
         );
 
         deceasedData.push({
+          link: (
+            <Button
+              onClick={() => {
+                copyToClipboard(
+                  `${process.env.NEXT_PUBLIC_SITE_URL}/live?id=${data.id}`,
+                );
+              }}
+            >
+              Link da live
+            </Button>
+          ),
           name: data.name,
           funeral_initial_date_formatted,
           funeral_final_date_formatted,
-          sepulting_date_formatted,
-          responsible_name: data.name,
           funeral: data.funeral.name,
+          sepulting_date_formatted,
           cemetery: data.funeral.cemetery.name,
+          responsible_name: data.responsible.name,
         });
       });
       setDeceased(deceasedData);
@@ -135,9 +162,11 @@ const Users: React.FC = () => {
     if (!data.deceased_search) {
       return;
     }
+
     const deceasedsResponse = await api.get(
       `deceaseds?name=${data.deceased_search}`,
     );
+
     const deceasedData: Deceased[] = [];
 
     const deceaseds: DeceasedResponseData[] = deceasedsResponse.data;
@@ -162,13 +191,24 @@ const Users: React.FC = () => {
       );
 
       deceasedData.push({
+        link: (
+          <Button
+            onClick={() => {
+              copyToClipboard(
+                `${process.env.NEXT_PUBLIC_SITE_URL}/live?id=${deceasedResponseData.id}`,
+              );
+            }}
+          >
+            Link da live
+          </Button>
+        ),
         name: deceasedResponseData.name,
         funeral_initial_date_formatted,
         funeral_final_date_formatted,
-        sepulting_date_formatted,
-        responsible_name: deceasedResponseData.name,
         funeral: deceasedResponseData.funeral.name,
+        sepulting_date_formatted,
         cemetery: deceasedResponseData.funeral.cemetery.name,
+        responsible_name: deceasedResponseData.responsible.name,
       });
     });
     setDeceased(deceasedData);
@@ -248,4 +288,4 @@ const Users: React.FC = () => {
   );
 };
 
-export default Users;
+export default Deceased;

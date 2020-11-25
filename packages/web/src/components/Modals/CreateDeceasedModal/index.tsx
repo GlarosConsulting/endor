@@ -221,6 +221,10 @@ const CreateDeceasedModal: React.FC<ICreateDeceasedModalProps> = ({
   const handleCemeteryChange = useCallback(
     async e => {
       const selected = e.target.value;
+      if (!selected) {
+        setFunerals([]);
+        return;
+      }
       const response = await api.get(`funerals/cemetery/${selected}`);
       const funeralsResponse = response.data;
 
@@ -243,7 +247,7 @@ const CreateDeceasedModal: React.FC<ICreateDeceasedModalProps> = ({
     >
       <ModalOverlay />
 
-      <ModalContent maxWidth={900} borderRadius="md">
+      <ModalContent maxWidth={980} borderRadius="md">
         <ModalHeader>Gerar link do live chat</ModalHeader>
         <ModalCloseButton
           onClick={event => {
@@ -289,7 +293,7 @@ const CreateDeceasedModal: React.FC<ICreateDeceasedModalProps> = ({
 
               <Select
                 name="cemetery_id"
-                placeholder="Cemitério"
+                placeholder="Cemitério do velório"
                 bg="white"
                 containerProps={{
                   marginLeft: 4,
