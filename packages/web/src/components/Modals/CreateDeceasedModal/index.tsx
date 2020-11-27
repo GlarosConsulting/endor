@@ -89,6 +89,23 @@ const CreateDeceasedModal: React.FC<ICreateDeceasedModalProps> = ({
     'Loading' | 'Finished' | null
   >(null);
 
+  useEffect(() => {
+    setRequestStatus(null);
+    setFunerals([] as Funeral[]);
+
+    api.get('cemeteries').then(response => {
+      const cemeteriesResponse: Cemetery[] = response.data;
+
+      setCemeteries(cemeteriesResponse);
+    });
+
+    api.get('customers').then(response => {
+      const customersResponse: Cemetery[] = response.data;
+
+      setCustomers(customersResponse);
+    });
+  }, []);
+
   const handleSubmit = useCallback(async (data: IFormData, event) => {
     try {
       formRef.current?.setErrors({});
@@ -199,23 +216,6 @@ const CreateDeceasedModal: React.FC<ICreateDeceasedModalProps> = ({
         duration: 5000,
       });
     }
-  }, []);
-
-  useEffect(() => {
-    setRequestStatus(null);
-    setFunerals([] as Funeral[]);
-
-    api.get('cemeteries').then(response => {
-      const cemeteriesResponse: Cemetery[] = response.data;
-
-      setCemeteries(cemeteriesResponse);
-    });
-
-    api.get('customers').then(response => {
-      const customersResponse: Cemetery[] = response.data;
-
-      setCustomers(customersResponse);
-    });
   }, []);
 
   const handleCemeteryChange = useCallback(

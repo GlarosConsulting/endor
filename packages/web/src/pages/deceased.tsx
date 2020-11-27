@@ -138,7 +138,7 @@ const Deceased: React.FC = () => {
                 );
               }}
             >
-              Link da live
+              Copiar Link da live
             </Button>
           ),
           name: data.name,
@@ -199,7 +199,7 @@ const Deceased: React.FC = () => {
               );
             }}
           >
-            Link da live
+            Copiar link da live
           </Button>
         ),
         name: deceasedResponseData.name,
