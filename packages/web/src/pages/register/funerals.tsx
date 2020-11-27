@@ -1,16 +1,24 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+  ReactElement,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
+import { FiSearch, FiPlus, FiEdit } from 'react-icons/fi';
+import { Column } from 'react-table';
 
-import { Box, Button, Flex, useToast } from '@chakra-ui/core';
+import { Box, Button, Flex, Tooltip, useDisclosure } from '@chakra-ui/core';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
-import * as Yup from 'yup';
 
-import Input from '@/components/Input';
+import CreateFuneralsModal from '@/components/Modals/CreateFuneralsModal';
+import UpdateFuneralsModal from '@/components/Modals/UpdateFuneralsModal';
 import Select from '@/components/Select';
 import SEO from '@/components/SEO';
 import Sidebar from '@/components/Sidebar';
+import Table from '@/components/Table';
 import Title from '@/components/Title';
-import getValidationErrors from '@/utils/getValidationErrors';
 
 import api from '../../services/api';
 
@@ -19,66 +27,136 @@ interface IFormData {
   url_cam: string;
 }
 // eslint-disable-next-line
-interface Cemeteries {
+interface Funerals {
+  id: string;
+  name: string;
+  url_cam: string;
+  cemetery: string;
+  edit_button: ReactElement;
+}
+
+interface ICemeteries {
   id: string;
   name: string;
 }
 
+const FUNERAL_TABLE_COLUMNS = [
+  {
+    Header: 'Nome',
+    accessor: 'name',
+  },
+  {
+    Header: 'Link da câmera',
+    accessor: 'url_cam',
+  },
+  {
+    Header: 'Cemitério',
+    accessor: 'cemetery',
+  },
+  {
+    Header: '',
+    accessor: 'edit_button',
+  },
+] as Column[];
+
 const Funerals: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
 
-  const [cemeteries, setCemeteries] = useState<Cemeteries[]>(
-    [] as Cemeteries[],
+  const [cemeteries, setCemeteries] = useState<ICemeteries[]>(
+    [] as ICemeteries[],
   );
-  const toast = useToast();
+
+  const [updatedFuneralId, setUpdatedFuneralId] = useState<string>('');
+  const [funerals, setFunerals] = useState<Funerals[]>([] as Funerals[]);
+
+  const {
+    isOpen: isCreateFuneralsOpen,
+    onOpen: onOpenCreateFunerals,
+    onClose: onCloseCreateFunerals,
+  } = useDisclosure();
+
+  const {
+    isOpen: isUpdateFuneralsModalOpen,
+    onOpen: onOpenUpdateFuneralsModal,
+    onClose: onCloseUpdateFuneralsModal,
+  } = useDisclosure();
+
+  const handleClickEditFunerlButton = useCallback((id: string) => {
+    setUpdatedFuneralId(id);
+    onOpenUpdateFuneralsModal();
+  }, []);
+
+  const getFunerals = useCallback(() => {
+    api.get('funerals').then(response => {
+      const funeralsResponse = response.data;
+      const funeralsData: Funerals[] = [];
+
+      funeralsResponse.forEach(data => {
+        funeralsData.push({
+          id: data.id,
+          name: data.name,
+          url_cam: data.url_cam,
+          cemetery: data.cemetery.name,
+          edit_button: (
+            <Button
+              onClick={() => {
+                handleClickEditFunerlButton(data.id);
+              }}
+            >
+              <FiEdit />
+            </Button>
+          ),
+        });
+      });
+
+      setFunerals(funeralsData);
+    });
+  }, [setFunerals]);
 
   useEffect(() => {
+    getFunerals();
+
     api.get('cemeteries').then(response => {
-      const cemeteriesResponse: Cemeteries[] = response.data;
+      const cemeteriesResponse: ICemeteries[] = response.data;
 
       setCemeteries(cemeteriesResponse);
     });
-  }, []);
+  }, [setCemeteries]);
 
-  const handleSubmit = useCallback(async (data: IFormData, { reset }) => {
-    try {
-      formRef.current?.setErrors({});
-
-      const schema = Yup.object().shape({
-        name: Yup.string().required('Nome obrigatório'),
-        url_cam: Yup.string().required('Link da camêra obrigatório'),
-        cemetery_id: Yup.string().uuid().required('Cemitério obrigatório'),
-      });
-
-      await schema.validate(data, { abortEarly: false });
-
-      await api.post('funerals', data);
-
-      toast({
-        status: 'success',
-        title: 'Velório criado com sucesso',
-        position: 'top',
-        duration: 3000,
-      });
-
-      reset();
-    } catch (err) {
-      if (err instanceof Yup.ValidationError) {
-        const errors = getValidationErrors(err);
-
-        formRef.current?.setErrors(errors);
-
-        return;
-      }
-
-      toast({
-        status: 'error',
-        title: 'Erro ao registrar cemitério',
-        description: 'Ocorreu um erro ao registrar cemitério, tente novamente.',
-        position: 'top',
-        duration: 5000,
-      });
+  const handleSearchFunerals = useCallback(async (data, { reset }) => {
+    if (!data.cemetery_id_for_search) {
+      getFunerals();
+      return;
     }
+
+    const response = await api.get(
+      `funerals/cemetery/${data.cemetery_id_for_search}`,
+    );
+
+    const funeralsResponse = response.data;
+    const funeralsData: Funerals[] = [];
+
+    funeralsResponse.forEach(funeral => {
+      funeralsData.push({
+        id: funeral.id,
+        name: funeral.name,
+        url_cam: funeral.url_cam,
+        cemetery: funeral.cemetery.name,
+        edit_button: (
+          <Button
+            onClick={() => {
+              handleClickEditFunerlButton(funeral.id);
+            }}
+          >
+            <FiEdit />
+          </Button>
+        ),
+      });
+    });
+
+    setFunerals(funeralsData);
+
+    reset();
   }, []);
 
   return (
@@ -109,55 +187,63 @@ const Funerals: React.FC = () => {
           <Box width="100%" color="gray.200">
             <Title css={{ color: 'gray.200' }}>Velórios</Title>
           </Box>
-          <Flex flexDirection="column" height="100%">
-            <Form
-              ref={formRef}
-              css={{ display: 'flex', flexDirection: 'column', height: '100%' }}
-              onSubmit={handleSubmit}
-            >
-              <Flex>
-                <Input
-                  name="name"
-                  placeholder="Nome"
-                  containerProps={{ width: '33.3%' }}
-                />
-                <Input
-                  name="url_cam"
-                  placeholder="Link da camêra do velório"
-                  containerProps={{ width: '33.3%', marginLeft: 15 }}
-                />
-                <Select
-                  name="cemetery_id"
-                  containerProps={{ width: '33.3%', marginLeft: 15 }}
-                  placeholder="Cemiterios"
-                >
-                  {cemeteries.map(cemetery => (
-                    <option value={cemetery.id}>{cemetery.name}</option>
-                  ))}
-                </Select>
-              </Flex>
-              <Flex marginTop={4} justifyContent="flex-end">
-                <Button
-                  type="submit"
-                  bg="green.400"
-                  color="gray.800"
-                  _hover={{
-                    bg: 'green.500',
-                    color: 'gray.900',
-                  }}
-                  _focusWithin={{
-                    bg: 'green.500',
-                    color: 'gray.900',
-                  }}
-                  width={300}
-                  marginY={4}
-                  paddingY={6}
-                >
-                  Salvar
+
+          <Form onSubmit={handleSearchFunerals} ref={formRef}>
+            <Flex>
+              <Select
+                height={8}
+                backgroundColor="White"
+                name="cemetery_id_for_search"
+                placeholder="Selecione o cemitério"
+                containerProps={{
+                  width: 300,
+                  height: 10,
+                  border: '1px solid',
+                  borderColor: 'gray.400',
+                  bg: 'white',
+                }}
+              >
+                {cemeteries.map(cemetery => (
+                  <option value={cemetery.id}>{cemetery.name}</option>
+                ))}
+              </Select>
+              <Tooltip
+                label="Pesquisar velórios por cemitério"
+                aria-label="Pesquisar velórios por cemitério"
+              >
+                <Button marginLeft={4} type="submit">
+                  <FiSearch />
                 </Button>
-              </Flex>
-            </Form>
-          </Flex>
+              </Tooltip>
+
+              <Tooltip
+                label="Adicionar novo velório."
+                aria-label="Adicionar novo velório."
+              >
+                <Button onClick={onOpenCreateFunerals} marginLeft={4}>
+                  <FiPlus />
+                </Button>
+              </Tooltip>
+
+              <CreateFuneralsModal
+                onSave={getFunerals}
+                isOpen={isCreateFuneralsOpen}
+                onClose={onCloseCreateFunerals}
+                cemeteries={cemeteries}
+              />
+
+              <UpdateFuneralsModal
+                updatedFuneralId={updatedFuneralId}
+                onSave={getFunerals}
+                isOpen={isUpdateFuneralsModalOpen}
+                onClose={onCloseUpdateFuneralsModal}
+              />
+            </Flex>
+
+            <Flex marginTop={6}>
+              <Table columns={FUNERAL_TABLE_COLUMNS} data={funerals}></Table>
+            </Flex>
+          </Form>
         </Flex>
       </Flex>
     </>

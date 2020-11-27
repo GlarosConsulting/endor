@@ -1,4 +1,5 @@
 import { injectable, inject } from 'tsyringe';
+import { v4 as uuidv4 } from 'uuid';
 
 import ICacheProvider from '@shared/container/providers/CacheProvider/models/ICacheProvider';
 import IWebSocketProvider from '@shared/container/providers/WebSocketProvider/models/IWebSocketProvider';
@@ -10,9 +11,9 @@ interface IRequest {
 }
 
 interface IMessage {
+  id: string;
   sender: string;
   content: string;
-  channel: string;
 }
 
 @injectable()
@@ -25,14 +26,29 @@ export default class CreateMessageService {
     private cacheProvider: ICacheProvider,
   ) {}
 
-  public execute({ sender, content, channel }: IRequest): IMessage {
-    const message = {
+  public async execute({
+    sender,
+    content,
+    channel,
+  }: IRequest): Promise<IMessage> {
+    const message: IMessage = {
+      id: uuidv4(),
       sender,
       content,
-      channel,
     };
 
-    this.cacheProvider.save(channel, message);
+    let messages = await this.cacheProvider.recover<IMessage[]>(
+      `messages:${channel}`,
+    );
+
+    if (!messages) {
+      messages = [];
+    }
+
+    await this.cacheProvider.save(`messages:${channel}`, [
+      ...messages,
+      message,
+    ]);
 
     this.webSocketProvider.emit({
       to: channel,

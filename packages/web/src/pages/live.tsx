@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { FiSend } from 'react-icons/fi';
 
 import {
@@ -23,9 +23,9 @@ import Title from '@/components/Title';
 import api from '@/services/api';
 
 interface IMessage {
+  id: string;
   sender: string;
   content: string;
-  channel: string;
 }
 
 // eslint-disable-next-line
@@ -52,11 +52,29 @@ const Live: React.FC = () => {
   const [message, setMessage] = useState<string>('');
   const [messages, setMessages] = useState<IMessage[]>([] as IMessage[]);
 
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
+
   const {
     isOpen: isGetUsernameModalOpen,
     onOpen: onOpenGetUsernameModal,
     onClose: onCloseGetUsernameModal,
   } = useDisclosure();
+
+  const scrollToLastMessage = useCallback((ignoreScrollTopOffset = false) => {
+    if (!messagesContainerRef.current) return;
+
+    const { scrollHeight, scrollTop } = messagesContainerRef.current;
+
+    if (!ignoreScrollTopOffset && scrollHeight - scrollTop >= 1000) return;
+
+    messagesContainerRef.current?.scrollTo({
+      top: scrollHeight,
+    });
+  }, []);
+
+  useEffect(() => {
+    scrollToLastMessage();
+  }, [messages, scrollToLastMessage]);
 
   useEffect(() => {
     const queryId = router.query.id as string;
@@ -74,6 +92,13 @@ const Live: React.FC = () => {
 
     api.get(`deceaseds/${queryId}`).then(response => {
       setDeceased(response.data);
+    });
+
+    api.get(`/messages/${queryId}`).then(response => {
+      const messagesResponse = response.data;
+
+      setMessages(messagesResponse);
+      scrollToLastMessage(true);
     });
   }, [router.query.id]);
 
@@ -97,8 +122,6 @@ const Live: React.FC = () => {
   );
 
   const handleSubmitMessage = useCallback(async () => {
-    setMessage('');
-
     const messageData = {
       sender: username,
       content: message,
@@ -106,7 +129,18 @@ const Live: React.FC = () => {
     };
 
     await api.post('/messages', messageData);
-  }, [message, username, deceased]);
+
+    setMessage('');
+  }, [message, username, deceased, scrollToLastMessage]);
+
+  const handleKeyUp = useCallback(
+    async e => {
+      if (e.key === 'Enter' || e.keyCode === 13) {
+        handleSubmitMessage();
+      }
+    },
+    [handleSubmitMessage],
+  );
 
   return (
     <>
@@ -126,6 +160,7 @@ const Live: React.FC = () => {
       <Box
         display="grid"
         gridTemplateColumns="75% 25%"
+        gridTemplateRows="100%"
         as="main"
         height="100vh"
         width="100%"
@@ -184,6 +219,8 @@ const Live: React.FC = () => {
                           "'Sepultamento: 'dd'/'MM'/'yyyy 'às' HH:mm",
                           { locale: ptBR },
                         )}
+                        {' no '}
+                        {deceased.funeral.cemetery.name}
                       </Text>
                     </Flex>
                   </>
@@ -196,21 +233,23 @@ const Live: React.FC = () => {
           backgroundColor="gray.800"
           borderRadius="md"
           width="100%"
-          height="100%"
+          maxHeight="100%"
           padding={6}
         >
-          <Box width="100%" color="gray.200">
+          <Box marginBottom={8} width="100%" height="3%" color="gray.200">
             <Title css={{ color: 'gray.200' }}>Chat</Title>
           </Box>
           <Flex
             direction="column"
             width="100%"
-            height="88%"
+            height="85%"
             overflowY="auto"
             borderBottom="2px solid #fff"
+            ref={messagesContainerRef}
           >
             {messages.map(actualMessage => (
               <MessageBox
+                key={actualMessage.id}
                 username={actualMessage.sender}
                 message={actualMessage.content}
               />
@@ -219,6 +258,7 @@ const Live: React.FC = () => {
           <Flex width="100%" height="12%" paddingTop={2}>
             <Textarea
               onChange={e => setMessage(e.target.value)}
+              onKeyUp={e => handleKeyUp(e)}
               value={message}
               placeholder="Digite sua mensagem"
               color="White"

@@ -89,6 +89,23 @@ const CreateDeceasedModal: React.FC<ICreateDeceasedModalProps> = ({
     'Loading' | 'Finished' | null
   >(null);
 
+  useEffect(() => {
+    setRequestStatus(null);
+    setFunerals([] as Funeral[]);
+
+    api.get('cemeteries').then(response => {
+      const cemeteriesResponse: Cemetery[] = response.data;
+
+      setCemeteries(cemeteriesResponse);
+    });
+
+    api.get('customers').then(response => {
+      const customersResponse: Cemetery[] = response.data;
+
+      setCustomers(customersResponse);
+    });
+  }, []);
+
   const handleSubmit = useCallback(async (data: IFormData, event) => {
     try {
       formRef.current?.setErrors({});
@@ -201,26 +218,13 @@ const CreateDeceasedModal: React.FC<ICreateDeceasedModalProps> = ({
     }
   }, []);
 
-  useEffect(() => {
-    setRequestStatus(null);
-    setFunerals([] as Funeral[]);
-
-    api.get('cemeteries').then(response => {
-      const cemeteriesResponse: Cemetery[] = response.data;
-
-      setCemeteries(cemeteriesResponse);
-    });
-
-    api.get('customers').then(response => {
-      const customersResponse: Cemetery[] = response.data;
-
-      setCustomers(customersResponse);
-    });
-  }, []);
-
   const handleCemeteryChange = useCallback(
     async e => {
       const selected = e.target.value;
+      if (!selected) {
+        setFunerals([]);
+        return;
+      }
       const response = await api.get(`funerals/cemetery/${selected}`);
       const funeralsResponse = response.data;
 
@@ -243,7 +247,7 @@ const CreateDeceasedModal: React.FC<ICreateDeceasedModalProps> = ({
     >
       <ModalOverlay />
 
-      <ModalContent maxWidth={900} borderRadius="md">
+      <ModalContent maxWidth={980} borderRadius="md">
         <ModalHeader>Gerar link do live chat</ModalHeader>
         <ModalCloseButton
           onClick={event => {
@@ -289,7 +293,7 @@ const CreateDeceasedModal: React.FC<ICreateDeceasedModalProps> = ({
 
               <Select
                 name="cemetery_id"
-                placeholder="Cemitério"
+                placeholder="Cemitério do velório"
                 bg="white"
                 containerProps={{
                   marginLeft: 4,

@@ -1,4 +1,4 @@
-import { getRepository, Repository } from 'typeorm';
+import { getRepository, Like, Repository } from 'typeorm';
 
 import ICreateCemeteryDTO from '@modules/cemeteries/dtos/ICreateCemeteryDTO';
 import ICemeteriesRepository from '@modules/cemeteries/repositories/ICemeteriesRepository';
@@ -14,6 +14,15 @@ class CemeteriesRepository implements ICemeteriesRepository {
 
   public async findAll(): Promise<Cemetery[] | undefined> {
     const cemeteries = await this.ormRepository.find({
+      relations: ['funerals'],
+    });
+
+    return cemeteries;
+  }
+
+  public async findByName(name: string): Promise<Cemetery[] | undefined> {
+    const cemeteries = await this.ormRepository.find({
+      where: { name: Like(`%${name}%`) },
       relations: ['funerals'],
     });
 

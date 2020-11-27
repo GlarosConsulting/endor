@@ -7,7 +7,16 @@ import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 const cemeteriesRouter = Router();
 const cemeteriesController = new CemeteriesController();
 
-cemeteriesRouter.get('/', ensureAuthenticated, cemeteriesController.index);
+cemeteriesRouter.get(
+  '/',
+  ensureAuthenticated,
+  celebrate({
+    [Segments.QUERY]: {
+      name: Joi.string().allow(null),
+    },
+  }),
+  cemeteriesController.index,
+);
 
 cemeteriesRouter.post(
   '/',

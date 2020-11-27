@@ -1,15 +1,17 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { FiSearch, FiPlus } from 'react-icons/fi';
+import { Column } from 'react-table';
 
-import { Box, Button, Flex, useToast } from '@chakra-ui/core';
+import { Box, Button, Flex, Tooltip, useDisclosure } from '@chakra-ui/core';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
-import * as Yup from 'yup';
 
 import Input from '@/components/Input';
+import CreateCemeteriesModal from '@/components/Modals/CreateCemeteriesModal';
 import SEO from '@/components/SEO';
 import Sidebar from '@/components/Sidebar';
+import Table from '@/components/Table';
 import Title from '@/components/Title';
-import getValidationErrors from '@/utils/getValidationErrors';
 
 import api from '../../services/api';
 
@@ -17,48 +19,55 @@ interface IFormData {
   name: string;
 }
 
+interface ICemeteries {
+  id: string;
+  name: string;
+}
+
+const CEMETERY_TABLE_COLUMNS = [
+  {
+    Header: 'Lista de cemitérios',
+    accessor: 'name',
+  },
+] as Column[];
+
 const Cemeteries: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
+  const {
+    isOpen: isCreateCemeteriesModalOpen,
+    onOpen: onOpenCreateCemeteriesModal,
+    onClose: onCloseCemeteriesModal,
+  } = useDisclosure();
 
-  const toast = useToast();
+  const [cemeteries, setCemeteries] = useState<ICemeteries[]>(
+    [] as ICemeteries[],
+  );
 
-  const handleSubmit = useCallback(async (data: IFormData, { reset }) => {
-    try {
-      formRef.current?.setErrors({});
+  const getCemeteries = useCallback(() => {
+    api.get('cemeteries').then(response => {
+      const cemeteriesResponse: ICemeteries[] = response.data;
 
-      const schema = Yup.object().shape({
-        name: Yup.string().required('Nome obrigatório'),
-      });
+      setCemeteries(cemeteriesResponse);
+    });
+  }, [setCemeteries]);
 
-      await schema.validate(data, { abortEarly: false });
+  useEffect(() => {
+    getCemeteries();
+  }, [getCemeteries]);
 
-      await api.post('cemeteries', data);
-
-      toast({
-        status: 'success',
-        title: 'Cemitério criado com sucesso',
-        position: 'top',
-        duration: 3000,
-      });
-
-      reset();
-    } catch (err) {
-      if (err instanceof Yup.ValidationError) {
-        const errors = getValidationErrors(err);
-
-        formRef.current?.setErrors(errors);
-
-        return;
-      }
-
-      toast({
-        status: 'error',
-        title: 'Erro ao registrar cemitério',
-        description: 'Ocorreu um erro ao registrar cemitério, tente novamente.',
-        position: 'top',
-        duration: 5000,
-      });
+  const handleSearch = useCallback(async (data, { reset }) => {
+    if (!data.cemetery_name_for_search) {
+      getCemeteries();
+      return;
     }
+
+    const response = await api.get(
+      `cemeteries/?name=${data.cemetery_name_for_search}`,
+    );
+
+    setCemeteries(response.data);
+
+    reset();
   }, []);
 
   return (
@@ -90,40 +99,48 @@ const Cemeteries: React.FC = () => {
             <Title css={{ color: 'gray.200' }}>Cemitérios</Title>
           </Box>
 
-          <Flex flexDirection="column" height="100%">
-            <Form
-              ref={formRef}
-              css={{ display: 'flex', flexDirection: 'column', height: '100%' }}
-              onSubmit={handleSubmit}
-            >
+          <Form ref={formRef} onSubmit={handleSearch}>
+            <Flex>
               <Input
-                name="name"
+                name="cemetery_name_for_search"
                 placeholder="Nome"
-                containerProps={{ width: '100%' }}
+                containerProps={{
+                  width: 300,
+                  height: 10,
+                  border: '1px solid',
+                  borderColor: 'gray.400',
+                  bg: 'white',
+                }}
               />
 
-              <Flex marginTop={4} justifyContent="flex-end">
-                <Button
-                  type="submit"
-                  bg="green.400"
-                  color="gray.800"
-                  _hover={{
-                    bg: 'green.500',
-                    color: 'gray.900',
-                  }}
-                  _focusWithin={{
-                    bg: 'green.500',
-                    color: 'gray.900',
-                  }}
-                  width={300}
-                  marginY={4}
-                  paddingY={6}
-                >
-                  Salvar
+              <Tooltip
+                label="Pesquisar cemitérios por nome"
+                aria-label="Pesquisar cemitérios por nome"
+              >
+                <Button marginLeft={4} type="submit">
+                  <FiSearch />
                 </Button>
-              </Flex>
-            </Form>
-          </Flex>
+              </Tooltip>
+
+              <Tooltip
+                label="Registrar novo cemitério"
+                aria-label="Registrar novo cemitério"
+              >
+                <Button marginLeft={4} onClick={onOpenCreateCemeteriesModal}>
+                  <FiPlus />
+                </Button>
+              </Tooltip>
+
+              <CreateCemeteriesModal
+                isOpen={isCreateCemeteriesModalOpen}
+                onClose={onCloseCemeteriesModal}
+                onSave={getCemeteries}
+              />
+            </Flex>
+            <Flex marginTop={6}>
+              <Table columns={CEMETERY_TABLE_COLUMNS} data={cemeteries}></Table>
+            </Flex>
+          </Form>
         </Flex>
       </Flex>
     </>

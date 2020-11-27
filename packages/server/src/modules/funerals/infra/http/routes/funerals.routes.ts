@@ -22,7 +22,21 @@ funeralsRouter.post(
   funeralsController.create,
 );
 
+funeralsRouter.put(
+  '/',
+  ensureAuthenticated,
+  celebrate({
+    [Segments.BODY]: {
+      id: Joi.string().uuid(),
+      name: Joi.string(),
+      url_cam: Joi.string(),
+    },
+  }),
+  funeralsController.update,
+);
+
 funeralsRouter.get('/', ensureAuthenticated, funeralsController.index);
+
 funeralsRouter.get(
   '/cemetery/:cemetery_id',
   ensureAuthenticated,
