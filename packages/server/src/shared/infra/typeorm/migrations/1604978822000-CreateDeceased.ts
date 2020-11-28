@@ -38,7 +38,11 @@ export class CreateDeceased1604978822000 implements MigrationInterface {
             type: 'varchar',
           },
           {
-            name: 'funeral_id',
+            name: 'funeral_location_id',
+            type: 'uuid',
+          },
+          {
+            name: 'sepulting_location_id',
             type: 'uuid',
           },
           {
@@ -65,7 +69,15 @@ export class CreateDeceased1604978822000 implements MigrationInterface {
             name: 'FuneralDeceased',
             referencedTableName: 'funerals',
             referencedColumnNames: ['id'],
-            columnNames: ['funeral_id'],
+            columnNames: ['funeral_location_id'],
+            onDelete: 'CASCADE',
+            onUpdate: 'CASCADE',
+          },
+          {
+            name: 'CemeteryDeceased',
+            referencedTableName: 'cemeteries',
+            referencedColumnNames: ['id'],
+            columnNames: ['sepulting_location_id'],
             onDelete: 'CASCADE',
             onUpdate: 'CASCADE',
           },

@@ -8,6 +8,7 @@ import IEmployeesRepository from '../repositories/IEmployeesRepository';
 
 interface IRequest {
   name: string;
+  role?: string;
   email: string;
   password: string;
 }
@@ -22,7 +23,12 @@ class CreateEmployeesService {
     private hashProvider: IHashProvider,
   ) {}
 
-  public async execute({ name, email, password }: IRequest): Promise<Employee> {
+  public async execute({
+    name,
+    role,
+    email,
+    password,
+  }: IRequest): Promise<Employee> {
     const checkEmailExists = await this.employeesRepository.findByEmail(email);
 
     if (checkEmailExists) {
@@ -31,11 +37,24 @@ class CreateEmployeesService {
 
     const hashedPassword = await this.hashProvider.generateHash(password);
 
-    const user = await this.employeesRepository.create({
-      name,
-      email,
-      password: hashedPassword,
-    });
+    let data;
+
+    if (!role) {
+      data = {
+        name,
+        email,
+        password: hashedPassword,
+      };
+    } else {
+      data = {
+        name,
+        role,
+        email,
+        password: hashedPassword,
+      };
+    }
+
+    const user = await this.employeesRepository.create(data);
 
     return user;
   }

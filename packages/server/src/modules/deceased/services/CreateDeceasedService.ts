@@ -10,7 +10,8 @@ interface IRequest {
   funeral_final_date: Date;
   sepulting_date: Date;
   live_chat_link: string;
-  funeral_id: string;
+  funeral_location_id: string;
+  sepulting_location_id: string;
 }
 
 @injectable()
@@ -27,7 +28,8 @@ class CreateDeceasedService {
     funeral_final_date,
     sepulting_date,
     live_chat_link,
-    funeral_id,
+    funeral_location_id,
+    sepulting_location_id,
   }: IRequest): Promise<Deceased> {
     const deceased = await this.deceasedsRepository.create({
       name,
@@ -36,7 +38,8 @@ class CreateDeceasedService {
       funeral_final_date,
       sepulting_date,
       live_chat_link,
-      funeral_id,
+      funeral_location_id,
+      sepulting_location_id,
     });
 
     return deceased;

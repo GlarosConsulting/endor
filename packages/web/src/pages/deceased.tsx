@@ -47,11 +47,14 @@ interface DeceasedResponseData {
   responsible: {
     name: string;
   };
-  funeral: {
+  funeral_location: {
     name: string;
     cemetery: {
       name: string;
     };
+  };
+  sepulting_location: {
+    name: string;
   };
 }
 
@@ -73,7 +76,7 @@ const DECEASED_TABLE_COLUMNS = [
     accessor: 'funeral_final_date_formatted',
   },
   {
-    Header: 'Velório',
+    Header: 'Local do velório',
     accessor: 'funeral',
   },
   {
@@ -81,7 +84,7 @@ const DECEASED_TABLE_COLUMNS = [
     accessor: 'sepulting_date_formatted',
   },
   {
-    Header: 'Cemitério',
+    Header: 'Cemitério do sepultamento',
     accessor: 'cemetery',
   },
   {
@@ -144,9 +147,9 @@ const Deceased: React.FC = () => {
           name: data.name,
           funeral_initial_date_formatted,
           funeral_final_date_formatted,
-          funeral: data.funeral.name,
+          funeral: `${data.funeral_location.name} do ${data.funeral_location.cemetery.name}`,
           sepulting_date_formatted,
-          cemetery: data.funeral.cemetery.name,
+          cemetery: data.sepulting_location.name,
           responsible_name: data.responsible.name,
         });
       });
@@ -205,9 +208,9 @@ const Deceased: React.FC = () => {
         name: deceasedResponseData.name,
         funeral_initial_date_formatted,
         funeral_final_date_formatted,
-        funeral: deceasedResponseData.funeral.name,
+        funeral: `${deceasedResponseData.funeral_location.name} do ${deceasedResponseData.funeral_location.cemetery.name}`,
         sepulting_date_formatted,
-        cemetery: deceasedResponseData.funeral.cemetery.name,
+        cemetery: deceasedResponseData.sepulting_location.name,
         responsible_name: deceasedResponseData.responsible.name,
       });
     });

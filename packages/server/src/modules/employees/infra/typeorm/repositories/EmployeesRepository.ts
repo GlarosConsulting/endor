@@ -32,6 +32,29 @@ class EmnployeesRepository implements IEmployeesRepository {
     return employee;
   }
 
+  public async findEmployees(): Promise<Employee[] | undefined> {
+    const employee = await this.ormRepository.find({
+      where: {
+        role: 'funcionario',
+      },
+    });
+
+    return employee;
+  }
+
+  public async findEmployeesByName(
+    name: string,
+  ): Promise<Employee[] | undefined> {
+    const employee = await this.ormRepository.find({
+      where: {
+        name: Like(`%${name}%`),
+        role: 'funcionario',
+      },
+    });
+
+    return employee;
+  }
+
   public async findByEmail(email: string): Promise<Employee | undefined> {
     const employee = await this.ormRepository.findOne({
       where: { email },

@@ -9,12 +9,13 @@ import ListEmployeesService from '@modules/employees/services/ListEmployeesServi
 
 export default class EmpoloyeesController {
   public async create(request: Request, response: Response): Promise<Response> {
-    const { name, email, password } = request.body;
+    const { name, role, email, password } = request.body;
 
     const createEmployee = container.resolve(CreateEmployeeService);
 
     const employee = await createEmployee.execute({
       name,
+      role,
       email,
       password,
     });
@@ -23,6 +24,8 @@ export default class EmpoloyeesController {
   }
 
   public async index(request: Request, response: Response): Promise<Response> {
+    const { id } = request.user;
+
     const queryParams = request.query;
     let name;
 
@@ -31,12 +34,12 @@ export default class EmpoloyeesController {
     let employees;
 
     if (!queryParams.name) {
-      employees = await listEmployees.execute({});
+      employees = await listEmployees.execute({ userId: id });
     } else {
       try {
         name = String(queryParams.name);
 
-        employees = await listEmployees.execute({ name });
+        employees = await listEmployees.execute({ userId: id, name });
       } catch (err) {
         throw new AppError(err);
       }
