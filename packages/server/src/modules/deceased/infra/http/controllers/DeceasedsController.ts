@@ -17,7 +17,8 @@ export default class DeceasedController {
       funeral_initial_date,
       funeral_final_date,
       sepulting_date,
-      funeral_id,
+      funeral_location_id,
+      sepulting_location_id,
     } = request.body;
 
     const createLiveLink = container.resolve(CreateLiveLinkService);
@@ -25,7 +26,7 @@ export default class DeceasedController {
 
     const funeralsRepository = new FuneralsRepository();
 
-    const funeral = await funeralsRepository.findById(funeral_id);
+    const funeral = await funeralsRepository.findById(funeral_location_id);
 
     if (!funeral) {
       throw new AppError('Velório não encontrado.');
@@ -35,13 +36,16 @@ export default class DeceasedController {
 
     const live_chat_link = await createLiveLink.execute(url_cam);
 
+    console.log(live_chat_link);
+
     const deceased = await createDeceased.execute({
       name,
       responsible_id,
       funeral_initial_date,
       funeral_final_date,
       sepulting_date,
-      funeral_id,
+      funeral_location_id,
+      sepulting_location_id,
       live_chat_link,
     });
 

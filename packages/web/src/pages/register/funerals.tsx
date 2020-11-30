@@ -20,6 +20,7 @@ import Sidebar from '@/components/Sidebar';
 import Table from '@/components/Table';
 import Title from '@/components/Title';
 
+import { useAuthentication } from '../../hooks/authentication';
 import api from '../../services/api';
 
 interface IFormData {
@@ -32,7 +33,7 @@ interface Funerals {
   name: string;
   url_cam: string;
   cemetery: string;
-  edit_button: ReactElement;
+  edit_button?: ReactElement;
 }
 
 interface ICemeteries {
@@ -61,6 +62,7 @@ const FUNERAL_TABLE_COLUMNS = [
 
 const Funerals: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
+  const { user } = useAuthentication();
 
   const [cemeteries, setCemeteries] = useState<ICemeteries[]>(
     [] as ICemeteries[],
@@ -68,6 +70,7 @@ const Funerals: React.FC = () => {
 
   const [updatedFuneralId, setUpdatedFuneralId] = useState<string>('');
   const [funerals, setFunerals] = useState<Funerals[]>([] as Funerals[]);
+  const [userRole, setUserRole] = useState<string | null>(null);
 
   const {
     isOpen: isCreateFuneralsOpen,
@@ -92,21 +95,30 @@ const Funerals: React.FC = () => {
       const funeralsData: Funerals[] = [];
 
       funeralsResponse.forEach(data => {
-        funeralsData.push({
-          id: data.id,
-          name: data.name,
-          url_cam: data.url_cam,
-          cemetery: data.cemetery.name,
-          edit_button: (
-            <Button
-              onClick={() => {
-                handleClickEditFunerlButton(data.id);
-              }}
-            >
-              <FiEdit />
-            </Button>
-          ),
-        });
+        if (user.role === 'administrador') {
+          funeralsData.push({
+            id: data.id,
+            name: data.name,
+            url_cam: data.url_cam,
+            cemetery: data.cemetery.name,
+            edit_button: (
+              <Button
+                onClick={() => {
+                  handleClickEditFunerlButton(data.id);
+                }}
+              >
+                <FiEdit />
+              </Button>
+            ),
+          });
+        } else {
+          funeralsData.push({
+            id: data.id,
+            name: data.name,
+            url_cam: data.url_cam,
+            cemetery: data.cemetery.name,
+          });
+        }
       });
 
       setFunerals(funeralsData);
@@ -118,6 +130,8 @@ const Funerals: React.FC = () => {
 
     api.get('cemeteries').then(response => {
       const cemeteriesResponse: ICemeteries[] = response.data;
+
+      setUserRole(user.role);
 
       setCemeteries(cemeteriesResponse);
     });
@@ -137,21 +151,30 @@ const Funerals: React.FC = () => {
     const funeralsData: Funerals[] = [];
 
     funeralsResponse.forEach(funeral => {
-      funeralsData.push({
-        id: funeral.id,
-        name: funeral.name,
-        url_cam: funeral.url_cam,
-        cemetery: funeral.cemetery.name,
-        edit_button: (
-          <Button
-            onClick={() => {
-              handleClickEditFunerlButton(funeral.id);
-            }}
-          >
-            <FiEdit />
-          </Button>
-        ),
-      });
+      if (user.role === 'administrador') {
+        funeralsData.push({
+          id: funeral.id,
+          name: funeral.name,
+          url_cam: funeral.url_cam,
+          cemetery: funeral.cemetery.name,
+          edit_button: (
+            <Button
+              onClick={() => {
+                handleClickEditFunerlButton(funeral.id);
+              }}
+            >
+              <FiEdit />
+            </Button>
+          ),
+        });
+      } else {
+        funeralsData.push({
+          id: funeral.id,
+          name: funeral.name,
+          url_cam: funeral.url_cam,
+          cemetery: funeral.cemetery.name,
+        });
+      }
     });
 
     setFunerals(funeralsData);
@@ -204,7 +227,9 @@ const Funerals: React.FC = () => {
                 }}
               >
                 {cemeteries.map(cemetery => (
-                  <option value={cemetery.id}>{cemetery.name}</option>
+                  <option key={cemetery.id} value={cemetery.id}>
+                    {cemetery.name}
+                  </option>
                 ))}
               </Select>
               <Tooltip
@@ -220,7 +245,11 @@ const Funerals: React.FC = () => {
                 label="Adicionar novo velório."
                 aria-label="Adicionar novo velório."
               >
-                <Button onClick={onOpenCreateFunerals} marginLeft={4}>
+                <Button
+                  hidden={userRole !== 'administrador'}
+                  onClick={onOpenCreateFunerals}
+                  marginLeft={4}
+                >
                   <FiPlus />
                 </Button>
               </Tooltip>

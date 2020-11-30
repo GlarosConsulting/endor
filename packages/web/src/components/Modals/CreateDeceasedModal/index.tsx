@@ -53,7 +53,8 @@ interface IFormData {
   name: string;
   responsible_id: string;
   cemetery_id: string;
-  funeral_id: string;
+  funeral_location_id: string;
+  sepulting_location_id: string;
   funeral_date: Date;
   funeral_initial_time: string;
   funeral_final_time: string;
@@ -109,12 +110,19 @@ const CreateDeceasedModal: React.FC<ICreateDeceasedModalProps> = ({
   const handleSubmit = useCallback(async (data: IFormData, event) => {
     try {
       formRef.current?.setErrors({});
-
+      console.log(data);
       const schema = Yup.object().shape({
         name: Yup.string().required('Nome do falecido obrigatório'),
         responsible_id: Yup.string().uuid().required('Responsável obrigatório'),
-        cemetery_id: Yup.string().uuid().required('Cemitério obrigatório'),
-        funeral_id: Yup.string().uuid().required('Velório obrigatório'),
+        cemetery_for_funeral_selection_id: Yup.string()
+          .uuid()
+          .required('Cemitério obrigatório'),
+        funeral_location_id: Yup.string()
+          .uuid()
+          .required('Local do velório obrigatório'),
+        sepulting_location_id: Yup.string()
+          .uuid()
+          .required('Local do sepultamento obrigatório'),
         funeral_date: Yup.date().required('Data do velório obrigatório'),
         funeral_initial_time: Yup.string().required(
           'Horário inicial do velório obrigatório',
@@ -168,7 +176,8 @@ const CreateDeceasedModal: React.FC<ICreateDeceasedModalProps> = ({
         funeral_initial_date: funeralInitialDateTime,
         funeral_final_date: funeralFinalDateTime,
         sepulting_date: sepultingDateTime,
-        funeral_id: data.funeral_id,
+        funeral_location_id: data.funeral_location_id,
+        sepulting_location_id: data.sepulting_location_id,
       };
 
       const response: { data: { id: string } } = await api.post(
@@ -292,8 +301,8 @@ const CreateDeceasedModal: React.FC<ICreateDeceasedModalProps> = ({
               </Select>
 
               <Select
-                name="cemetery_id"
-                placeholder="Cemitério do velório"
+                name="cemetery_for_funeral_selection_id"
+                placeholder="Local da sala do velório"
                 bg="white"
                 containerProps={{
                   marginLeft: 4,
@@ -312,9 +321,9 @@ const CreateDeceasedModal: React.FC<ICreateDeceasedModalProps> = ({
               </Select>
 
               <Select
-                name="funeral_id"
+                name="funeral_location_id"
                 isDisabled={!(funerals.length > 0)}
-                placeholder="Velório"
+                placeholder="Sala de velório"
                 bg="white"
                 containerProps={{
                   marginLeft: 4,
@@ -333,15 +342,40 @@ const CreateDeceasedModal: React.FC<ICreateDeceasedModalProps> = ({
             </Flex>
 
             <Flex marginTop={4}>
+              <Select
+                name="sepulting_location_id"
+                placeholder="Local do sepultamento"
+                bg="white"
+                containerProps={{
+                  marginTop: 3,
+                  marginRight: 4,
+                  width: 460,
+                  border: '1px solid',
+                  borderColor: 'gray.400',
+                  bg: 'white',
+                }}
+                onChange={handleCemeteryChange}
+              >
+                {cemeteries.map(cemetery => (
+                  <option key={cemetery.id} value={cemetery.id}>
+                    {cemetery.name}
+                  </option>
+                ))}
+              </Select>
               <DatePicker
                 name="funeral_date"
                 placeholderText="Data do velório"
-                containerProps={{ marginTop: 3, width: '100%', color: 'black' }}
+                containerProps={{
+                  marginTop: 3,
+                  width: 460,
+                  color: 'black',
+                }}
               />
               <TimePicker
                 name="funeral_initial_time"
                 label="Horário do início do velório"
                 containerProps={{
+                  width: 496,
                   marginLeft: 4,
                   marginTop: 3,
                   color: 'black',
@@ -351,6 +385,7 @@ const CreateDeceasedModal: React.FC<ICreateDeceasedModalProps> = ({
                 name="funeral_final_time"
                 label="Horário do final do velório"
                 containerProps={{
+                  width: 496,
                   marginLeft: 4,
                   marginTop: 3,
                   color: 'black',

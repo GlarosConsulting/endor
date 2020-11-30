@@ -8,11 +8,12 @@ import {
   CreateDateColumn,
 } from 'typeorm';
 
+import Cemetery from '../../../../cemeteries/infra/typeorm/entities/Cemetery';
 import Customer from '../../../../customers/infra/typeorm/entities/Customer';
 import Funeral from '../../../../funerals/infra/typeorm/entities/Funeral';
 
 @Entity('deceased')
-export default class Cemeteries {
+export default class Deceased {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -39,11 +40,18 @@ export default class Cemeteries {
   live_chat_link: string;
 
   @Column()
-  funeral_id: string;
+  funeral_location_id: string;
 
   @ManyToOne(() => Funeral, funeral => funeral.deceased)
-  @JoinColumn({ name: 'funeral_id' })
-  funeral: Funeral;
+  @JoinColumn({ name: 'funeral_location_id' })
+  funeral_location: Funeral;
+
+  @Column()
+  sepulting_location_id: string;
+
+  @ManyToOne(() => Cemetery, cemetery => cemetery.deceased_buried)
+  @JoinColumn({ name: 'sepulting_location_id' })
+  sepulting_location: Cemetery;
 
   @CreateDateColumn()
   created_at: Date;

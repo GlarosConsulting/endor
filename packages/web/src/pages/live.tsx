@@ -36,11 +36,11 @@ interface Deceased {
   funeral_initial_date?: string;
   funeral_final_date?: string;
   sepulting_date?: string;
-  funeral?: {
+  funeral_location?: {
     name?: string;
-    cemetery?: {
-      name?: string;
-    };
+  };
+  sepulting_location?: {
+    name?: string;
   };
 }
 
@@ -188,9 +188,9 @@ const Live: React.FC = () => {
             width="100%"
             height="25%"
           >
-            <Box width="100%" color="gray.200">
+            <Box width="100%" color="gray.200" overflowY="auto">
               <Title css={{ color: 'gray.200' }}>{deceased.name}</Title>
-              <Text fontSize="xl">{deceased?.funeral?.name}</Text>
+              <Text fontSize="xl">{deceased?.funeral_location?.name}</Text>
               {deceased.funeral_final_date &&
                 deceased.funeral_initial_date &&
                 deceased.sepulting_date && (
@@ -220,7 +220,7 @@ const Live: React.FC = () => {
                           { locale: ptBR },
                         )}
                         {' no '}
-                        {deceased.funeral.cemetery.name}
+                        {deceased.sepulting_location.name}
                       </Text>
                     </Flex>
                   </>

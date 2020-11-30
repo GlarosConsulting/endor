@@ -15,7 +15,12 @@ class DeceasedsRepository implements IDeceasedsRepository {
   public async findByName(name: string): Promise<Deceased[] | undefined> {
     const deceased = await this.ormRepository.find({
       where: { name: Like(`%${name}%`) },
-      relations: ['responsible', 'funeral', 'funeral.cemetery'],
+      relations: [
+        'responsible',
+        'funeral_location',
+        'funeral_location.cemetery',
+        'sepulting_location',
+      ],
     });
 
     return deceased;
@@ -23,7 +28,12 @@ class DeceasedsRepository implements IDeceasedsRepository {
 
   public async findAll(): Promise<Deceased[] | undefined> {
     const deceaseds = await this.ormRepository.find({
-      relations: ['responsible', 'funeral', 'funeral.cemetery'],
+      relations: [
+        'responsible',
+        'funeral_location',
+        'funeral_location.cemetery',
+        'sepulting_location',
+      ],
     });
 
     return deceaseds;
@@ -32,7 +42,12 @@ class DeceasedsRepository implements IDeceasedsRepository {
   public async findById(id: string): Promise<Deceased | undefined> {
     const deceased = await this.ormRepository.findOne({
       where: { id },
-      relations: ['responsible', 'funeral', 'funeral.cemetery'],
+      relations: [
+        'responsible',
+        'funeral_location',
+        'funeral_location.cemetery',
+        'sepulting_location',
+      ],
     });
 
     return deceased;

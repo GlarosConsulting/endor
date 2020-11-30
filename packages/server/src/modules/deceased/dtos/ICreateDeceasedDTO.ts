@@ -5,5 +5,6 @@ export default interface ICreateUserDTO {
   funeral_final_date: Date;
   sepulting_date: Date;
   live_chat_link: string;
-  funeral_id: string;
+  funeral_location_id: string;
+  sepulting_location_id: string;
 }
