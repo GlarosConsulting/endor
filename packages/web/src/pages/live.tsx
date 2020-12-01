@@ -5,6 +5,7 @@ import { FiSend } from 'react-icons/fi';
 import {
   Flex,
   Box,
+  Grid,
   Text,
   Textarea,
   Button,
@@ -150,13 +151,13 @@ const Live: React.FC = () => {
         description="Fazer login na plataforma"
       />
 
-      <Box
-        display="grid"
-        gridTemplateColumns={{ xs: '100%', lg: '75% 25%' }}
-        gridTemplateRows="100%"
+      <Grid
         as="main"
-        width="100%"
         height="100vh"
+        width="100%"
+        templateColumns={{ xs: '100%', lg: '15% 65% 20%' }}
+        templateRows="100%"
+        templateAreas={{ xs: "'video' 'chat' 'ad'", lg: "'ad video chat'" }}
         paddingX={4}
         paddingTop={4}
         paddingBottom={4}
@@ -168,7 +169,24 @@ const Live: React.FC = () => {
           onClose={onCloseGetUsernameModal}
         />
 
-        <Flex direction="column" marginRight={{ xs: 0, lg: 4 }}>
+        <Flex
+          gridArea="ad"
+          borderRadius="md"
+          marginRight={{ xs: 0, lg: 4 }}
+          marginTop={{ xs: 4, lg: 0 }}
+          height={{ xs: 600, lg: '100%' }}
+          backgroundColor="white"
+          alignItems="center"
+          justifyContent="center"
+        >
+          Propaganda
+        </Flex>
+
+        <Flex
+          gridArea="video"
+          direction="column"
+          marginRight={{ xs: 0, lg: 4 }}
+        >
           <iframe
             src={deceased.live_chat_link}
             frameBorder="0"
@@ -226,68 +244,90 @@ const Live: React.FC = () => {
             </Box>
           </Flex>
         </Flex>
+
         <Flex
+          gridArea="chat"
           marginTop={{ xs: 4, lg: 0 }}
-          padding={{ xs: 6, lg: 4 }}
           direction="column"
-          backgroundColor="gray.800"
           borderRadius="md"
           width="100%"
-          height={{ xs: '600px', lg: '100%' }}
+          height={{ xs: 900, lg: '100%' }}
         >
-          <Box marginBottom={8} width="100%" height="3%" color="gray.200">
-            <Title css={{ color: 'gray.200' }}>Chat</Title>
-          </Box>
           <Flex
-            direction="column"
-            width="100%"
-            height="85%"
-            overflowY="auto"
-            borderBottom="2px solid #fff"
-            ref={messagesContainerRef}
+            gridArea="ad"
+            borderRadius="md"
+            height={{ xs: 300, lg: '40%' }}
+            backgroundColor="white"
+            alignItems="center"
+            justifyContent="center"
+            marginBottom={4}
           >
-            {messages.map(actualMessage => (
-              <MessageBox
-                key={actualMessage.id}
-                username={actualMessage.sender}
-                message={actualMessage.content}
-              />
-            ))}
+            Propaganda
           </Flex>
-          <Flex width="100%" height="12%" paddingTop={2}>
-            <Textarea
-              onChange={e => setMessage(e.target.value)}
-              onKeyUp={e => handleKeyUp(e)}
-              value={message}
-              placeholder="Digite sua mensagem"
-              color="White"
-              width="86%"
-              border={0}
-              minHeight={2}
-              height="100%"
-              resize="none"
-              borderRadius="8px 0 0 8px"
-              backgroundColor="gray.700"
-            />
-            <Tooltip label="Enviar mensagem" aria-label="Enviar mensagem">
-              <Button
-                onClick={handleSubmitMessage}
-                width="14%"
+
+          <Flex
+            borderRadius="md"
+            padding={{ xs: 6, lg: 4 }}
+            backgroundColor="gray.800"
+            direction="column"
+            height={{ lg: '60%', xs: 600 }}
+          >
+            <Box marginBottom={8} width="100%" height="3%" color="gray.200">
+              <Title css={{ color: 'gray.200' }}>Chat</Title>
+            </Box>
+
+            <Flex
+              direction="column"
+              width="100%"
+              height="85%"
+              overflowY="auto"
+              borderBottom="2px solid #fff"
+              ref={messagesContainerRef}
+            >
+              {messages.map(actualMessage => (
+                <MessageBox
+                  key={actualMessage.id}
+                  username={actualMessage.sender}
+                  message={actualMessage.content}
+                />
+              ))}
+            </Flex>
+
+            <Flex width="100%" height="12%" paddingTop={2}>
+              <Textarea
+                onChange={e => setMessage(e.target.value)}
+                onKeyUp={e => handleKeyUp(e)}
+                value={message}
+                placeholder="Digite sua mensagem"
+                color="White"
+                width="86%"
+                border={0}
+                minHeight={2}
                 height="100%"
+                resize="none"
+                borderRadius="8px 0 0 8px"
                 backgroundColor="gray.700"
-                borderRadius="0 8px 8px 0"
-                alignItems="center"
-                justifyContent="center"
-                _hover={{
-                  backgroundColor: 'gray.900',
-                }}
-              >
-                <FiSend color="White" size={20} />
-              </Button>
-            </Tooltip>
+              />
+              <Tooltip label="Enviar mensagem" aria-label="Enviar mensagem">
+                <Button
+                  onClick={handleSubmitMessage}
+                  width="14%"
+                  height="100%"
+                  backgroundColor="gray.700"
+                  borderRadius="0 8px 8px 0"
+                  alignItems="center"
+                  justifyContent="center"
+                  _hover={{
+                    backgroundColor: 'gray.900',
+                  }}
+                >
+                  <FiSend color="White" size={20} />
+                </Button>
+              </Tooltip>
+            </Flex>
           </Flex>
         </Flex>
-      </Box>
+      </Grid>
     </>
   );
 };
