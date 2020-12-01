@@ -5,10 +5,8 @@ import { Column } from 'react-table';
 import { Button, Flex, Tooltip, useDisclosure } from '@chakra-ui/core';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
-// eslint-disable-next-line
 import { format } from 'date-fns';
-// eslint-disable-next-line
-import { ptBR } from 'date-fns/locale'
+import { ptBR } from 'date-fns/locale';
 
 import Input from '@/components/Input';
 import CreateCustomersModal from '@/components/Modals/CreateCustomersModal';
@@ -19,14 +17,12 @@ import Table from '@/components/Table';
 
 import api from '../../services/api';
 
-// eslint-disable-next-line
-interface Employees {
+interface IEmployees {
   name: string;
   email: string;
 }
 
-// eslint-disable-next-line
-interface Customers {
+interface ICustomers {
   name: string;
   email: string;
   telephone: string;
@@ -35,8 +31,7 @@ interface Customers {
   birth_date_formatted: string;
 }
 
-// eslint-disable-next-line
-interface CustomersResponseData {
+interface ICustomersResponseData {
   name: string;
   email: string;
   telephone: string;
@@ -102,16 +97,16 @@ const Users: React.FC = () => {
     'customer',
   );
 
-  const [customers, setCustomers] = useState<Customers[]>([] as Customers[]);
-  const [employees, setEmployees] = useState<Employees[]>([] as Employees[]);
+  const [customers, setCustomers] = useState<ICustomers[]>([] as ICustomers[]);
+  const [employees, setEmployees] = useState<IEmployees[]>([] as IEmployees[]);
 
   const getUsers = useCallback(() => {
     api.get('customers').then(response => {
       const responseData = response.data;
 
-      const customersData: Customers[] = [];
+      const customersData: ICustomers[] = [];
 
-      responseData.forEach((data: CustomersResponseData) => {
+      responseData.forEach((data: ICustomersResponseData) => {
         const birth_date_formatted = format(
           new Date(data.birth_date),
           "dd'/'MM'/'yyyy'",
@@ -155,9 +150,9 @@ const Users: React.FC = () => {
 
       const responseData = response.data;
 
-      const customersData: Customers[] = [];
+      const customersData: ICustomers[] = [];
 
-      responseData.forEach((customersResponseData: CustomersResponseData) => {
+      responseData.forEach((customersResponseData: ICustomersResponseData) => {
         const birth_date_formatted = format(
           new Date(customersResponseData.birth_date),
           "dd'/'MM'/'yyyy'",

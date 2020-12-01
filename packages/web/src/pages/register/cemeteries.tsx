@@ -15,10 +15,6 @@ import Title from '@/components/Title';
 
 import api from '../../services/api';
 
-interface IFormData {
-  name: string;
-}
-
 interface ICemeteries {
   id: string;
   name: string;

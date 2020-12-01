@@ -31,20 +31,17 @@ import getValidationErrors from '@/utils/getValidationErrors';
 
 import api from '../../../services/api';
 
-// eslint-disable-next-line
-interface Customers {
+interface ICustomers {
   id: string;
   name: string;
 }
 
-// eslint-disable-next-line
-interface Cemetery {
+interface ICemetery {
   id: string;
   name: string;
 }
 
-// eslint-disable-next-line
-interface Funeral {
+interface IFuneral {
   id: string;
   name: string;
 }
@@ -80,9 +77,9 @@ const CreateDeceasedModal: React.FC<ICreateDeceasedModalProps> = ({
 
   const toast = useToast();
 
-  const [cemeteries, setCemeteries] = useState<Cemetery[]>([] as Cemetery[]);
-  const [customers, setCustomers] = useState<Customers[]>([] as Customers[]);
-  const [funerals, setFunerals] = useState<Funeral[]>([] as Funeral[]);
+  const [cemeteries, setCemeteries] = useState<ICemetery[]>([] as ICemetery[]);
+  const [customers, setCustomers] = useState<ICustomers[]>([] as ICustomers[]);
+  const [funerals, setFunerals] = useState<IFuneral[]>([] as IFuneral[]);
 
   const [createdLink, setCreatedLink] = useState<string>('');
 
@@ -92,16 +89,16 @@ const CreateDeceasedModal: React.FC<ICreateDeceasedModalProps> = ({
 
   useEffect(() => {
     setRequestStatus(null);
-    setFunerals([] as Funeral[]);
+    setFunerals([] as IFuneral[]);
 
     api.get('cemeteries').then(response => {
-      const cemeteriesResponse: Cemetery[] = response.data;
+      const cemeteriesResponse: ICemetery[] = response.data;
 
       setCemeteries(cemeteriesResponse);
     });
 
     api.get('customers').then(response => {
-      const customersResponse: Cemetery[] = response.data;
+      const customersResponse: ICemetery[] = response.data;
 
       setCustomers(customersResponse);
     });

@@ -17,13 +17,6 @@ import * as Yup from 'yup';
 import Input from '@/components/Input';
 import getValidationErrors from '@/utils/getValidationErrors';
 
-interface IFormData {
-  name: string;
-  email: string;
-  password: string;
-  passwordConfirmation: string;
-}
-
 interface ICreateEmpployeesModalProps {
   isOpen: boolean;
   onClose?: (

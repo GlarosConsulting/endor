@@ -23,12 +23,7 @@ import Title from '@/components/Title';
 import { useAuthentication } from '../../hooks/authentication';
 import api from '../../services/api';
 
-interface IFormData {
-  name: string;
-  url_cam: string;
-}
-// eslint-disable-next-line
-interface Funerals {
+interface IFunerals {
   id: string;
   name: string;
   url_cam: string;
@@ -69,7 +64,7 @@ const Funerals: React.FC = () => {
   );
 
   const [updatedFuneralId, setUpdatedFuneralId] = useState<string>('');
-  const [funerals, setFunerals] = useState<Funerals[]>([] as Funerals[]);
+  const [funerals, setFunerals] = useState<IFunerals[]>([] as IFunerals[]);
   const [userRole, setUserRole] = useState<string | null>(null);
 
   const {
@@ -92,7 +87,7 @@ const Funerals: React.FC = () => {
   const getFunerals = useCallback(() => {
     api.get('funerals').then(response => {
       const funeralsResponse = response.data;
-      const funeralsData: Funerals[] = [];
+      const funeralsData: IFunerals[] = [];
 
       funeralsResponse.forEach(data => {
         if (user.role === 'administrador') {
@@ -148,7 +143,7 @@ const Funerals: React.FC = () => {
     );
 
     const funeralsResponse = response.data;
-    const funeralsData: Funerals[] = [];
+    const funeralsData: IFunerals[] = [];
 
     funeralsResponse.forEach(funeral => {
       if (user.role === 'administrador') {

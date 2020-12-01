@@ -28,8 +28,7 @@ interface IMessage {
   content: string;
 }
 
-// eslint-disable-next-line
-interface Deceased {
+interface IDeceased {
   id?: string;
   name?: string;
   live_chat_link?: string;
@@ -47,7 +46,7 @@ interface Deceased {
 const Live: React.FC = () => {
   const router = useRouter();
 
-  const [deceased, setDeceased] = useState<Deceased>({} as Deceased);
+  const [deceased, setDeceased] = useState<IDeceased>({} as IDeceased);
   const [username, setUsername] = useState<string>('');
   const [message, setMessage] = useState<string>('');
   const [messages, setMessages] = useState<IMessage[]>([] as IMessage[]);
