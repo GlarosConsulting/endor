@@ -2,7 +2,7 @@
   "name": "endor",
   "private": true,
   "version": "1.0.0",
-  "author": "André 'Dezzy' <@andredezzy>",
+  "author": "Matheus Fraga' <@Mlfraga>",
   "license": "MIT",
   "engines": {
     "node": ">= 12.16.x",

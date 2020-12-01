@@ -79,7 +79,7 @@ const CreateEmpployeesModal: React.FC<ICreateEmpployeesModalProps> = ({
 
       <ModalContent borderRadius="md">
         <ModalHeader>
-          Por favor informe seu nome, para que putras pessoas te identifiquem no
+          Por favor informe seu nome, para que outras pessoas te identifiquem no
           chat
         </ModalHeader>
         <Form ref={formRef} onSubmit={handleSubmit}>

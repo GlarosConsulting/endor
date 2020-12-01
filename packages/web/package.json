@@ -1,7 +1,7 @@
 {
   "name": "@endor/web",
   "version": "1.0.0",
-  "author": "André 'Dezzy' <@andredezzy>",
+  "author": "Matheus Fraga' <@Mlfraga>",
   "private": true,
   "scripts": {
     "dev": "next dev",

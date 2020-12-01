@@ -151,52 +151,51 @@ const Live: React.FC = () => {
         description="Fazer login na plataforma"
       />
 
-      <SetUsernameForLiveTelespectors
-        onSave={onSaveUsername}
-        isOpen={isGetUsernameModalOpen}
-        onClose={onCloseGetUsernameModal}
-      />
-
       <Box
         display="grid"
-        gridTemplateColumns="75% 25%"
+        gridTemplateColumns={{ xs: '100%', lg: '75% 25%' }}
         gridTemplateRows="100%"
         as="main"
-        height="100vh"
         width="100%"
-        paddingX={6}
-        backgroundColor="gray.900"
-        paddingTop={8}
-        paddingBottom={8}
-        paddingRight={8}
+        height="100vh"
+        paddingX={4}
+        paddingTop={4}
+        paddingBottom={4}
+        paddingRight={4}
       >
-        <Flex direction="column" marginRight={8}>
+        <SetUsernameForLiveTelespectors
+          onSave={onSaveUsername}
+          isOpen={isGetUsernameModalOpen}
+          onClose={onCloseGetUsernameModal}
+        />
+
+        <Flex direction="column" marginRight={{ xs: 0, lg: 4 }}>
           <iframe
             src={deceased.live_chat_link}
             frameBorder="0"
             title={deceased.id}
-            style={{ width: '100%', height: '75%' }}
+            style={{ width: '100%', height: '72%' }}
           ></iframe>
           <Flex
             backgroundColor="gray.800"
-            marginTop={8}
-            paddingTop={6}
-            paddingRight={6}
-            paddingLeft={6}
-            paddingBottom={6}
+            marginTop={4}
+            paddingTop={4}
+            paddingRight={4}
+            paddingLeft={4}
+            paddingBottom={4}
             borderRadius="md"
             width="100%"
-            height="25%"
+            height="28%"
           >
             <Box width="100%" color="gray.200" overflowY="auto">
               <Title css={{ color: 'gray.200' }}>{deceased.name}</Title>
-              <Text fontSize="xl">{deceased?.funeral_location?.name}</Text>
+              <Text fontSize="lg">{deceased?.funeral_location?.name}</Text>
               {deceased.funeral_final_date &&
                 deceased.funeral_initial_date &&
                 deceased.sepulting_date && (
                   <>
                     <Flex>
-                      <Text fontSize="xl">
+                      <Text fontSize="lg">
                         {format(
                           new Date(deceased.funeral_initial_date),
                           "'Velório: 'dd'/'MM'/'yyyy 'das' HH:mm",
@@ -213,7 +212,7 @@ const Live: React.FC = () => {
                       </Text>
                     </Flex>
                     <Flex>
-                      <Text fontSize="xl">
+                      <Text fontSize="lg">
                         {format(
                           new Date(deceased.sepulting_date),
                           "'Sepultamento: 'dd'/'MM'/'yyyy 'às' HH:mm",
@@ -229,12 +228,13 @@ const Live: React.FC = () => {
           </Flex>
         </Flex>
         <Flex
+          marginTop={{ xs: 4, lg: 0 }}
+          padding={{ xs: 6, lg: 4 }}
           direction="column"
           backgroundColor="gray.800"
           borderRadius="md"
           width="100%"
-          maxHeight="100%"
-          padding={6}
+          height={{ xs: '600px', lg: '100%' }}
         >
           <Box marginBottom={8} width="100%" height="3%" color="gray.200">
             <Title css={{ color: 'gray.200' }}>Chat</Title>
