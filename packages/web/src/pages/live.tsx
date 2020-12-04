@@ -145,10 +145,10 @@ const Live: React.FC = () => {
   return (
     <>
       <SEO
-        title="Endor"
+        title="Live page"
         image="og/boost.png"
         shouldExcludeTitleSuffix
-        description="Fazer login na plataforma"
+        description=""
       />
 
       <Grid

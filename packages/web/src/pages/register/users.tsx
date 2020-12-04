@@ -195,20 +195,20 @@ const Users: React.FC = () => {
         shouldExcludeTitleSuffix
         description="Fazer o registro e pesquisa de usuários na plataforma"
       />
+
       <Flex
         as="main"
         height="100vh"
         position="relative"
         backgroundColor="gray.800"
+        width="100vw"
       >
         <Sidebar />
 
         <Flex
-          paddingLeft={2}
+          paddingRight={8}
           paddingTop={15}
-          paddingRight={65}
-          width="100%"
-          height="100%"
+          width="calc(100vw - 310px)"
           bg="gray.800"
           direction="column"
         >
@@ -257,7 +257,7 @@ const Users: React.FC = () => {
               Funcionários
             </Button>
           </Flex>
-          <Flex flexDirection="column" marginTop={6} height="100%">
+          <Flex flexDirection="column" marginTop={6}>
             <Form ref={formRef} onSubmit={handleSearchUser}>
               {userSelected === 'customer' ? (
                 <>
@@ -295,7 +295,15 @@ const Users: React.FC = () => {
                     onClose={onCloseCreateCustomers}
                   />
 
-                  <Flex marginTop={6}>
+                  <Flex
+                    marginTop={6}
+                    maxHeight={{
+                      sm: 300,
+                      md: 400,
+                      lg: 500,
+                      xl: 600,
+                    }}
+                  >
                     <Table
                       columns={CUSTOMERS_TABLE_COLUMNS}
                       data={customers}
@@ -342,7 +350,15 @@ const Users: React.FC = () => {
                     onClose={onCloseCreateEmployees}
                   />
 
-                  <Flex marginTop={6}>
+                  <Flex
+                    marginTop={6}
+                    maxHeight={{
+                      sm: 300,
+                      md: 400,
+                      lg: 500,
+                      xl: 600,
+                    }}
+                  >
                     <Table
                       columns={EMPLOYEES_TABLE_COLUMNS}
                       data={employees}

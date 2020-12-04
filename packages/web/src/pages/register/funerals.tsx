@@ -190,6 +190,7 @@ const Funerals: React.FC = () => {
         height="100vh"
         position="relative"
         backgroundColor="gray.800"
+        width="100vw"
       >
         <Sidebar />
 
@@ -197,7 +198,7 @@ const Funerals: React.FC = () => {
           paddingLeft={2}
           paddingTop={15}
           paddingRight={65}
-          width="100%"
+          width="calc(100vw - 310px)"
           height="100%"
           bg="gray.800"
           direction="column"
@@ -264,7 +265,16 @@ const Funerals: React.FC = () => {
               />
             </Flex>
 
-            <Flex marginTop={6}>
+            <Flex
+              marginTop={6}
+              height="100%"
+              maxHeight={{
+                sm: 300,
+                md: 400,
+                lg: 500,
+                xl: 600,
+              }}
+            >
               <Table columns={FUNERAL_TABLE_COLUMNS} data={funerals}></Table>
             </Flex>
           </Form>

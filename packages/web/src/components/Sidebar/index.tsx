@@ -32,7 +32,7 @@ const Sidebar: React.FC<ISidebarProps> = () => {
   }, [navBarCollapsed]);
 
   return (
-    <>
+    <Flex>
       <Container>
         <ProSidebar collapsed={navBarCollapsed}>
           <SidebarHeader
@@ -84,7 +84,8 @@ const Sidebar: React.FC<ISidebarProps> = () => {
           </SidebarFooter>
         </ProSidebar>
       </Container>
-      <Flex direction="column" height="100vh" justifyContent="flex-end">
+
+      <Flex direction="column" justifyContent="flex-end">
         <Tooltip
           label={navBarCollapsed ? 'Abrir menu' : 'Fechar menu'}
           aria-label={navBarCollapsed ? 'Abrir menu' : 'Fechar menu'}
@@ -110,7 +111,7 @@ const Sidebar: React.FC<ISidebarProps> = () => {
           </Flex>
         </Tooltip>
       </Flex>
-    </>
+    </Flex>
   );
 };
 export default Sidebar;

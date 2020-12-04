@@ -77,6 +77,7 @@ const Cemeteries: React.FC = () => {
       <Flex
         as="main"
         height="100vh"
+        width="100vw"
         position="relative"
         backgroundColor="gray.800"
       >
@@ -86,7 +87,7 @@ const Cemeteries: React.FC = () => {
           paddingLeft={2}
           paddingTop={15}
           paddingRight={65}
-          width="100%"
+          width="calc(100vw - 310px)"
           height="100%"
           bg="gray.800"
           direction="column"
@@ -133,7 +134,15 @@ const Cemeteries: React.FC = () => {
                 onSave={getCemeteries}
               />
             </Flex>
-            <Flex marginTop={6}>
+            <Flex
+              marginTop={6}
+              maxHeight={{
+                sm: 300,
+                md: 400,
+                lg: 500,
+                xl: 600,
+              }}
+            >
               <Table columns={CEMETERY_TABLE_COLUMNS} data={cemeteries}></Table>
             </Flex>
           </Form>
