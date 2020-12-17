@@ -8,6 +8,7 @@ import employeesRouter from '@modules/employees/infra/http/routes/employees.rout
 import profileRouter from '@modules/employees/infra/http/routes/profile.routes';
 import sessionsRouter from '@modules/employees/infra/http/routes/sessions.routes';
 import funeralsRouter from '@modules/funerals/infra/http/routes/funerals.routes';
+import imagesRouter from '@modules/images/infra/http/routes/images.routes';
 
 const routes = Router();
 
@@ -19,6 +20,7 @@ routes.use('/sessions', sessionsRouter);
 routes.use('/profile', profileRouter);
 routes.use('/funerals', funeralsRouter);
 routes.use('/messages', messagesRouter);
+routes.use('/images', imagesRouter);
 
 routes.get('/', (_request, response) =>
   response.json({

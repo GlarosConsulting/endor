@@ -14,6 +14,8 @@ import EmnployeesRepository from '@modules/employees/infra/typeorm/repositories/
 import IEmployeesRepository from '@modules/employees/repositories/IEmployeesRepository';
 import FuneralsRepository from '@modules/funerals/infra/typeorm/repositories/FuneralsRepository';
 import IFuneralsRepository from '@modules/funerals/repositories/IFuneralsRepository';
+import ImagesRepository from '@modules/images/infra/typeorm/repositories/ImagesRepository';
+import IImagesRepository from '@modules/images/repositories/IImagesRepository';
 
 container.registerSingleton<ICustomersRepository>(
   'CustomersRepository',
@@ -38,4 +40,9 @@ container.registerSingleton<IEmployeesRepository>(
 container.registerSingleton<IFuneralsRepository>(
   'FuneralsRepository',
   FuneralsRepository,
+);
+
+container.registerSingleton<IImagesRepository>(
+  'ImagesRepository',
+  ImagesRepository,
 );
