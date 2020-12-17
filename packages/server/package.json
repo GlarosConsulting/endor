@@ -1,7 +1,7 @@
 {
   "name": "@endor/server",
   "version": "1.0.0",
-  "author": "André 'Dezzy' <@andredezzy>",
+  "author": "Matheus Fraga' <@Mlfraga>",
   "private": true,
   "scripts": {
     "build": "babel src --extensions \".ts,.js\" --out-dir dist --copy-files",
@@ -11,6 +11,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@types/multer": "^1.4.5",
     "@types/puppeteer": "^5.4.0",
     "@types/uuid": "^8.3.0",
     "aws-sdk": "^2.729.0",

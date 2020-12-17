@@ -10,8 +10,6 @@ import usePersistedState from '@/utils/hooks/usePersistedState';
 
 import api from '../services/api';
 
-type Role = 'admin' | 'manager' | 'moderator' | 'vip';
-
 interface IUser {
   id: string;
   name: string;

@@ -17,13 +17,6 @@ import * as Yup from 'yup';
 import Input from '@/components/Input';
 import getValidationErrors from '@/utils/getValidationErrors';
 
-interface IFormData {
-  name: string;
-  email: string;
-  password: string;
-  passwordConfirmation: string;
-}
-
 interface ICreateEmpployeesModalProps {
   isOpen: boolean;
   onClose?: (
@@ -79,7 +72,7 @@ const CreateEmpployeesModal: React.FC<ICreateEmpployeesModalProps> = ({
 
       <ModalContent borderRadius="md">
         <ModalHeader>
-          Por favor informe seu nome, para que putras pessoas te identifiquem no
+          Por favor informe seu nome, para que outras pessoas te identifiquem no
           chat
         </ModalHeader>
         <Form ref={formRef} onSubmit={handleSubmit}>

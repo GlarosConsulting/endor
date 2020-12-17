@@ -11,10 +11,8 @@ import { Column } from 'react-table';
 import { Button, Flex, Tooltip, useDisclosure, Box } from '@chakra-ui/core';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
-// eslint-disable-next-line
 import { format } from 'date-fns';
-// eslint-disable-next-line
-import { ptBR } from 'date-fns/locale'
+import { ptBR } from 'date-fns/locale';
 
 import Input from '@/components/Input';
 import CreateDeceasedModal from '@/components/Modals/CreateDeceasedModal';
@@ -25,8 +23,7 @@ import Title from '@/components/Title';
 
 import api from '../services/api';
 
-// eslint-disable-next-line
-interface Deceased {
+interface IDeceased {
   link: ReactElement;
   name: string;
   funeral_initial_date_formatted: string;
@@ -37,8 +34,7 @@ interface Deceased {
   cemetery: string;
 }
 
-// eslint-disable-next-line
-interface DeceasedResponseData {
+interface IDeceasedResponseData {
   id: string;
   name: string;
   funeral_initial_date: string;
@@ -111,9 +107,9 @@ const Deceased: React.FC = () => {
   const getDeceased = useCallback(() => {
     api.get('deceaseds').then(response => {
       const deceaseds = response.data;
-      const deceasedData: Deceased[] = [];
+      const deceasedData: IDeceased[] = [];
 
-      deceaseds.forEach((data: DeceasedResponseData) => {
+      deceaseds.forEach((data: IDeceasedResponseData) => {
         const funeral_initial_date_formatted = format(
           new Date(data.funeral_initial_date),
           "dd'/'MM'/'yyyy '-' HH:mm'h'",
@@ -170,11 +166,11 @@ const Deceased: React.FC = () => {
       `deceaseds?name=${data.deceased_search}`,
     );
 
-    const deceasedData: Deceased[] = [];
+    const deceasedData: IDeceased[] = [];
 
-    const deceaseds: DeceasedResponseData[] = deceasedsResponse.data;
+    const deceaseds: IDeceasedResponseData[] = deceasedsResponse.data;
 
-    deceaseds.forEach((deceasedResponseData: DeceasedResponseData) => {
+    deceaseds.forEach((deceasedResponseData: IDeceasedResponseData) => {
       const funeral_initial_date_formatted = format(
         new Date(deceasedResponseData.funeral_initial_date),
         "dd'/'MM'/'yyyy '-' HH:mm'h'",
@@ -231,6 +227,7 @@ const Deceased: React.FC = () => {
         height="100vh"
         position="relative"
         backgroundColor="gray.800"
+        width="100%"
       >
         <Sidebar />
 
@@ -238,7 +235,7 @@ const Deceased: React.FC = () => {
           paddingLeft={2}
           paddingTop={15}
           paddingRight={65}
-          width="100%"
+          width="calc(100vw - 310px)"
           height="100%"
           bg="gray.800"
           direction="column"
@@ -282,7 +279,15 @@ const Deceased: React.FC = () => {
             </Flex>
           </Form>
 
-          <Flex marginTop={6}>
+          <Flex
+            marginTop={6}
+            maxHeight={{
+              sm: 300,
+              md: 400,
+              lg: 500,
+              xl: 600,
+            }}
+          >
             <Table columns={DECEASED_TABLE_COLUMNS} data={deceased}></Table>
           </Flex>
         </Flex>

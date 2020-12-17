@@ -23,12 +23,7 @@ import Title from '@/components/Title';
 import { useAuthentication } from '../../hooks/authentication';
 import api from '../../services/api';
 
-interface IFormData {
-  name: string;
-  url_cam: string;
-}
-// eslint-disable-next-line
-interface Funerals {
+interface IFunerals {
   id: string;
   name: string;
   url_cam: string;
@@ -69,7 +64,7 @@ const Funerals: React.FC = () => {
   );
 
   const [updatedFuneralId, setUpdatedFuneralId] = useState<string>('');
-  const [funerals, setFunerals] = useState<Funerals[]>([] as Funerals[]);
+  const [funerals, setFunerals] = useState<IFunerals[]>([] as IFunerals[]);
   const [userRole, setUserRole] = useState<string | null>(null);
 
   const {
@@ -92,7 +87,7 @@ const Funerals: React.FC = () => {
   const getFunerals = useCallback(() => {
     api.get('funerals').then(response => {
       const funeralsResponse = response.data;
-      const funeralsData: Funerals[] = [];
+      const funeralsData: IFunerals[] = [];
 
       funeralsResponse.forEach(data => {
         if (user.role === 'administrador') {
@@ -148,7 +143,7 @@ const Funerals: React.FC = () => {
     );
 
     const funeralsResponse = response.data;
-    const funeralsData: Funerals[] = [];
+    const funeralsData: IFunerals[] = [];
 
     funeralsResponse.forEach(funeral => {
       if (user.role === 'administrador') {
@@ -195,6 +190,7 @@ const Funerals: React.FC = () => {
         height="100vh"
         position="relative"
         backgroundColor="gray.800"
+        width="100vw"
       >
         <Sidebar />
 
@@ -202,7 +198,7 @@ const Funerals: React.FC = () => {
           paddingLeft={2}
           paddingTop={15}
           paddingRight={65}
-          width="100%"
+          width="calc(100vw - 310px)"
           height="100%"
           bg="gray.800"
           direction="column"
@@ -269,7 +265,16 @@ const Funerals: React.FC = () => {
               />
             </Flex>
 
-            <Flex marginTop={6}>
+            <Flex
+              marginTop={6}
+              height="100%"
+              maxHeight={{
+                sm: 300,
+                md: 400,
+                lg: 500,
+                xl: 600,
+              }}
+            >
               <Table columns={FUNERAL_TABLE_COLUMNS} data={funerals}></Table>
             </Flex>
           </Form>

@@ -7,6 +7,7 @@ const Title: React.FC = ({ children }) => (
     size="lg"
     borderBottom="1px solid"
     borderBottomColor="gray.300"
+    color="gray.300"
     paddingBottom={2}
     marginBottom={4}
   >

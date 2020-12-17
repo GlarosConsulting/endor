@@ -71,7 +71,7 @@ const Login: React.FC = () => {
   return (
     <>
       <SEO
-        title="Endor"
+        title="Login"
         image="og/boost.png"
         shouldExcludeTitleSuffix
         description="Fazer login na plataforma"

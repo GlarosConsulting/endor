@@ -5,11 +5,13 @@ import { FiSend } from 'react-icons/fi';
 import {
   Flex,
   Box,
+  Grid,
   Text,
   Textarea,
   Button,
   Tooltip,
   useDisclosure,
+  Image,
 } from '@chakra-ui/core';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -28,8 +30,7 @@ interface IMessage {
   content: string;
 }
 
-// eslint-disable-next-line
-interface Deceased {
+interface IDeceased {
   id?: string;
   name?: string;
   live_chat_link?: string;
@@ -47,9 +48,11 @@ interface Deceased {
 const Live: React.FC = () => {
   const router = useRouter();
 
-  const [deceased, setDeceased] = useState<Deceased>({} as Deceased);
+  const [deceased, setDeceased] = useState<IDeceased>({} as IDeceased);
   const [username, setUsername] = useState<string>('');
   const [message, setMessage] = useState<string>('');
+  const [rightImageFilename, setRightImageFilename] = useState<string>('');
+  const [leftImageFilename, setLeftImageFilename] = useState<string>('');
   const [messages, setMessages] = useState<IMessage[]>([] as IMessage[]);
 
   const messagesContainerRef = useRef<HTMLDivElement>(null);
@@ -100,6 +103,18 @@ const Live: React.FC = () => {
       setMessages(messagesResponse);
       scrollToLastMessage(true);
     });
+
+    api.get('images?name=378x372').then(response => {
+      const { file } = response.data;
+
+      setRightImageFilename(file);
+    });
+
+    api.get('images?name=240x920').then(response => {
+      const { file } = response.data;
+
+      setLeftImageFilename(file);
+    });
   }, [router.query.id]);
 
   const onSaveUsername = useCallback(
@@ -145,58 +160,71 @@ const Live: React.FC = () => {
   return (
     <>
       <SEO
-        title="Endor"
+        title="Live page"
         image="og/boost.png"
         shouldExcludeTitleSuffix
-        description="Fazer login na plataforma"
+        description=""
       />
 
-      <SetUsernameForLiveTelespectors
-        onSave={onSaveUsername}
-        isOpen={isGetUsernameModalOpen}
-        onClose={onCloseGetUsernameModal}
-      />
-
-      <Box
-        display="grid"
-        gridTemplateColumns="75% 25%"
-        gridTemplateRows="100%"
+      <Grid
         as="main"
         height="100vh"
         width="100%"
-        paddingX={6}
-        backgroundColor="gray.900"
-        paddingTop={8}
-        paddingBottom={8}
-        paddingRight={8}
+        templateColumns={{ xs: '100%', lg: '15% 65% 20%' }}
+        templateRows="100%"
+        templateAreas={{ xs: "'video' 'chat' 'ad'", lg: "'ad video chat'" }}
+        paddingX={4}
+        paddingTop={4}
+        paddingBottom={4}
+        paddingRight={4}
       >
-        <Flex direction="column" marginRight={8}>
+        <SetUsernameForLiveTelespectors
+          onSave={onSaveUsername}
+          isOpen={isGetUsernameModalOpen}
+          onClose={onCloseGetUsernameModal}
+        />
+
+        <Image
+          gridArea="ad"
+          borderRadius="md"
+          marginTop={{ xs: 6, lg: 0 }}
+          marginBottom={{ xs: 8, lg: 0 }}
+          height={{ xs: 920, lg: '100%' }}
+          width={{ xs: '100%' }}
+          src={`${process.env.NEXT_PUBLIC_API_URL}/files/${leftImageFilename}`}
+        />
+        <Flex
+          gridArea="video"
+          direction="column"
+          marginRight={{ xs: 0, lg: 4 }}
+          marginLeft={{ xs: 0, lg: 4 }}
+        >
           <iframe
             src={deceased.live_chat_link}
             frameBorder="0"
             title={deceased.id}
-            style={{ width: '100%', height: '75%' }}
+            style={{ width: '100%', height: '72%' }}
           ></iframe>
           <Flex
             backgroundColor="gray.800"
-            marginTop={8}
-            paddingTop={6}
-            paddingRight={6}
-            paddingLeft={6}
-            paddingBottom={6}
+            marginTop={4}
+            paddingTop={4}
+            paddingRight={4}
+            paddingLeft={4}
+            paddingBottom={4}
             borderRadius="md"
             width="100%"
-            height="25%"
+            height="28%"
           >
             <Box width="100%" color="gray.200" overflowY="auto">
               <Title css={{ color: 'gray.200' }}>{deceased.name}</Title>
-              <Text fontSize="xl">{deceased?.funeral_location?.name}</Text>
+              <Text fontSize="lg">{deceased?.funeral_location?.name}</Text>
               {deceased.funeral_final_date &&
                 deceased.funeral_initial_date &&
                 deceased.sepulting_date && (
                   <>
                     <Flex>
-                      <Text fontSize="xl">
+                      <Text fontSize="lg">
                         {format(
                           new Date(deceased.funeral_initial_date),
                           "'Velório: 'dd'/'MM'/'yyyy 'das' HH:mm",
@@ -213,7 +241,7 @@ const Live: React.FC = () => {
                       </Text>
                     </Flex>
                     <Flex>
-                      <Text fontSize="xl">
+                      <Text fontSize="lg">
                         {format(
                           new Date(deceased.sepulting_date),
                           "'Sepultamento: 'dd'/'MM'/'yyyy 'às' HH:mm",
@@ -228,67 +256,86 @@ const Live: React.FC = () => {
             </Box>
           </Flex>
         </Flex>
+
         <Flex
+          gridArea="chat"
+          marginTop={{ xs: 4, lg: 0 }}
           direction="column"
-          backgroundColor="gray.800"
           borderRadius="md"
           width="100%"
-          maxHeight="100%"
-          padding={6}
+          height={{ xs: 900, lg: '100%' }}
         >
-          <Box marginBottom={8} width="100%" height="3%" color="gray.200">
-            <Title css={{ color: 'gray.200' }}>Chat</Title>
-          </Box>
+          <Image
+            gridArea="ad"
+            borderRadius="md"
+            height={{ xs: 300, lg: '40%' }}
+            marginBottom={4}
+            src={`${process.env.NEXT_PUBLIC_API_URL}/files/${rightImageFilename}`}
+          />
+
           <Flex
+            borderRadius="md"
+            padding={{ xs: 6, lg: 4 }}
+            backgroundColor="gray.800"
             direction="column"
-            width="100%"
-            height="85%"
-            overflowY="auto"
-            borderBottom="2px solid #fff"
-            ref={messagesContainerRef}
+            height={{ lg: '60%', xs: 600 }}
           >
-            {messages.map(actualMessage => (
-              <MessageBox
-                key={actualMessage.id}
-                username={actualMessage.sender}
-                message={actualMessage.content}
-              />
-            ))}
-          </Flex>
-          <Flex width="100%" height="12%" paddingTop={2}>
-            <Textarea
-              onChange={e => setMessage(e.target.value)}
-              onKeyUp={e => handleKeyUp(e)}
-              value={message}
-              placeholder="Digite sua mensagem"
-              color="White"
-              width="86%"
-              border={0}
-              minHeight={2}
-              height="100%"
-              resize="none"
-              borderRadius="8px 0 0 8px"
-              backgroundColor="gray.700"
-            />
-            <Tooltip label="Enviar mensagem" aria-label="Enviar mensagem">
-              <Button
-                onClick={handleSubmitMessage}
-                width="14%"
+            <Box marginBottom={8} width="100%" height="3%" color="gray.200">
+              <Title css={{ color: 'gray.200' }}>Chat</Title>
+            </Box>
+
+            <Flex
+              direction="column"
+              width="100%"
+              height="85%"
+              overflowY="auto"
+              borderBottom="2px solid #fff"
+              ref={messagesContainerRef}
+            >
+              {messages.map(actualMessage => (
+                <MessageBox
+                  key={actualMessage.id}
+                  username={actualMessage.sender}
+                  message={actualMessage.content}
+                />
+              ))}
+            </Flex>
+
+            <Flex width="100%" height="12%" paddingTop={2}>
+              <Textarea
+                onChange={e => setMessage(e.target.value)}
+                onKeyUp={e => handleKeyUp(e)}
+                value={message}
+                placeholder="Digite sua mensagem"
+                color="White"
+                width="86%"
+                border={0}
+                minHeight={2}
                 height="100%"
+                resize="none"
+                borderRadius="8px 0 0 8px"
                 backgroundColor="gray.700"
-                borderRadius="0 8px 8px 0"
-                alignItems="center"
-                justifyContent="center"
-                _hover={{
-                  backgroundColor: 'gray.900',
-                }}
-              >
-                <FiSend color="White" size={20} />
-              </Button>
-            </Tooltip>
+              />
+              <Tooltip label="Enviar mensagem" aria-label="Enviar mensagem">
+                <Button
+                  onClick={handleSubmitMessage}
+                  width="14%"
+                  height="100%"
+                  backgroundColor="gray.700"
+                  borderRadius="0 8px 8px 0"
+                  alignItems="center"
+                  justifyContent="center"
+                  _hover={{
+                    backgroundColor: 'gray.900',
+                  }}
+                >
+                  <FiSend color="White" size={20} />
+                </Button>
+              </Tooltip>
+            </Flex>
           </Flex>
         </Flex>
-      </Box>
+      </Grid>
     </>
   );
 };

@@ -16,7 +16,7 @@ const SEO: React.FC<ISEOProps> = ({
   shouldExcludeTitleSuffix = false,
   shouldIndexPage = true,
 }) => {
-  const pageTitle = `${!shouldExcludeTitleSuffix ? 'RealData - ' : ''}${title}`;
+  const pageTitle = `${!shouldExcludeTitleSuffix ? 'Endor - ' : ''}${title}`;
   const pageImage = image
     ? `${process.env.NEXT_PUBLIC_SITE_URL}/${image}`
     : null;

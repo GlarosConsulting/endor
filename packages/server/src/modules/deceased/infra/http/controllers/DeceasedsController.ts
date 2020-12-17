@@ -36,8 +36,6 @@ export default class DeceasedController {
 
     const live_chat_link = await createLiveLink.execute(url_cam);
 
-    console.log(live_chat_link);
-
     const deceased = await createDeceased.execute({
       name,
       responsible_id,
