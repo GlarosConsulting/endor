@@ -1,6 +1,13 @@
 import Link from 'next/link';
 import React, { useCallback, useState } from 'react';
-import { FiPower, FiArrowLeft, FiArrowRight } from 'react-icons/fi';
+import {
+  FiPower,
+  FiFileText,
+  FiArrowLeft,
+  FiArrowRight,
+  FiSettings,
+  FiEdit,
+} from 'react-icons/fi';
 import {
   ProSidebar,
   Menu,
@@ -23,7 +30,7 @@ interface ISidebarProps {
 }
 
 const Sidebar: React.FC<ISidebarProps> = () => {
-  const { logOut } = useAuthentication();
+  const { logOut, user } = useAuthentication();
 
   const [navBarCollapsed, setNavBarCollapsed] = useState<boolean>(false);
 
@@ -49,8 +56,8 @@ const Sidebar: React.FC<ISidebarProps> = () => {
           </SidebarHeader>
 
           <SidebarContent>
-            <Menu iconShape="square">
-              <SubMenu title="Registrar">
+            <Menu iconShape="circle">
+              <SubMenu icon={<FiEdit />} title="Registrar">
                 <Link href="/register/cemeteries">
                   <MenuItem>Cemitérios</MenuItem>
                 </Link>
@@ -62,11 +69,21 @@ const Sidebar: React.FC<ISidebarProps> = () => {
                 </Link>
               </SubMenu>
 
-              <SubMenu title="Movimentações">
+              <SubMenu icon={<FiFileText />} title="Movimentações">
                 <Link href="/deceased">
                   <MenuItem>Novo Falecido</MenuItem>
                 </Link>
               </SubMenu>
+
+              {user?.role !== 'administrador' ? (
+                <></>
+              ) : (
+                <Link href="/images/settings">
+                  <MenuItem icon={<FiSettings />}>
+                    Configurar propagandas
+                  </MenuItem>
+                </Link>
+              )}
             </Menu>
           </SidebarContent>
 

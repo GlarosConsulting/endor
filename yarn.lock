@@ -3185,10 +3185,10 @@
     "@types/bson" "*"
     "@types/node" "*"
 
-"@types/multer@^1.4.3":
-  version "1.4.4"
-  resolved "https://registry.yarnpkg.com/@types/multer/-/multer-1.4.4.tgz#bb5d9abc410da82726ceca74008bb81813349a88"
-  integrity sha512-wdfkiKBBEMTODNbuF3J+qDDSqJxt50yB9pgDiTcFew7f97Gcc7/sM4HR66ofGgpJPOALWOqKAch4gPyqEXSkeQ==
+"@types/multer@^1.4.5":
+  version "1.4.5"
+  resolved "https://registry.yarnpkg.com/@types/multer/-/multer-1.4.5.tgz#db0557562307e9adb6661a9500c334cd7ddd0cd9"
+  integrity sha512-9b/0a8JyrR0r2nQhL73JR86obWL7cogfX12augvlrvcpciCo/hkvEsgu80Z4S2g2DHGVXHr8pUIi1VhqFJ8Ufw==
   dependencies:
     "@types/express" "*"
 
@@ -4096,6 +4096,11 @@ atob@^2.1.2:
   resolved "https://registry.yarnpkg.com/atob/-/atob-2.1.2.tgz#6d9517eb9e030d2436666651e86bd9f6f13533c9"
   integrity sha512-Wm6ukoaOGJi/73p/cl2GvLjTI5JM1k/O14isD73YML8StrH/7/lRFgmg8nICZgD3bZZvjwCGxtMOD3wWNAu8cg==
 
+attr-accept@^2.2.1:
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/attr-accept/-/attr-accept-2.2.2.tgz#646613809660110749e92f2c10833b70968d929b"
+  integrity sha512-7prDjvt9HmqiZ0cl5CRjtS84sEyhsHP2coDkaZKRKVfCDo9s7iw7ChVmar78Gu9pC4SoR/28wFu/G5JJhTnqEg==
+
 aws-sdk@^2.729.0:
   version "2.784.0"
   resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.784.0.tgz#70136a537d5c977a9e9a2e8b6a234b45ec2da0a1"
@@ -4662,6 +4667,13 @@ busboy@^0.2.11:
   dependencies:
     dicer "0.2.5"
     readable-stream "1.1.x"
+
+busboy@^0.3.1:
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/busboy/-/busboy-0.3.1.tgz#170899274c5bf38aae27d5c62b71268cd585fd1b"
+  integrity sha512-y7tTxhGKXcyBxRKAni+awqx8uqaJKrSFSNFSeRG5CsWNdmy2BIK+6VGWEW7TZnIO/533mtMEA4rOevQV815YJw==
+  dependencies:
+    dicer "0.3.0"
 
 byline@^5.0.0:
   version "5.0.0"
@@ -6074,6 +6086,13 @@ dicer@0.2.5:
     readable-stream "1.1.x"
     streamsearch "0.1.2"
 
+dicer@0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/dicer/-/dicer-0.3.0.tgz#eacd98b3bfbf92e8ab5c2fdb71aaac44bb06b872"
+  integrity sha512-MdceRRWqltEG2dZqO769g27N/3PXfcKl04VhYnBlo2YhH7zPi88VebsjTKclaOyiuMaGU72hTfw3VkUitGcVCA==
+  dependencies:
+    streamsearch "0.1.2"
+
 diff-sequences@^26.6.2:
   version "26.6.2"
   resolved "https://registry.yarnpkg.com/diff-sequences/-/diff-sequences-26.6.2.tgz#48ba99157de1923412eed41db6b6d4aa9ca7c0b1"
@@ -6942,6 +6961,13 @@ express-async-errors@^3.1.1:
   resolved "https://registry.yarnpkg.com/express-async-errors/-/express-async-errors-3.1.1.tgz#6053236d61d21ddef4892d6bd1d736889fc9da41"
   integrity sha512-h6aK1da4tpqWSbyCa3FxB/V6Ehd4EEB15zyQq9qe75OZBp0krinNKuH4rAY+S/U/2I36vdLAUFSjQJ+TFmODng==
 
+express-fileupload@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/express-fileupload/-/express-fileupload-1.2.0.tgz#356c4dfd645be71ab9fb2f4e6d84eeb00d247979"
+  integrity sha512-oe4WpKcSppXnl5peornawWUa6tKmIc1/kJxMNRGJR1A0v4zyLL6VsFR6wZ8P2a4Iq3aGx8xae3Vlr+MOMQhFPw==
+  dependencies:
+    busboy "^0.3.1"
+
 express@^4.17.1:
   version "4.17.1"
   resolved "https://registry.yarnpkg.com/express/-/express-4.17.1.tgz#4491fc38605cf51f8629d39c2b5d026f98a4c134"
@@ -7125,6 +7151,13 @@ file-entry-cache@^5.0.1:
   integrity sha512-bCg29ictuBaKUwwArK4ouCaqDgLZcysCFLmM/Yn/FDoqndh/9vNuQfXRDvTuXKLxfD/JtZQGKFT8MGcJBK644g==
   dependencies:
     flat-cache "^2.0.1"
+
+file-selector@^0.2.2:
+  version "0.2.4"
+  resolved "https://registry.yarnpkg.com/file-selector/-/file-selector-0.2.4.tgz#7b98286f9dbb9925f420130ea5ed0a69238d4d80"
+  integrity sha512-ZDsQNbrv6qRi1YTDOEWzf5J2KjZ9KMI1Q2SGeTkCJmNNW25Jg4TW4UMcmoqcg4WrAyKRcpBXdbWRxkfrOzVRbA==
+  dependencies:
+    tslib "^2.0.3"
 
 file-uri-to-path@1.0.0:
   version "1.0.0"
@@ -11713,6 +11746,15 @@ react-dom@16.13.1:
     prop-types "^15.6.2"
     scheduler "^0.19.1"
 
+react-dropzone@^11.2.4:
+  version "11.2.4"
+  resolved "https://registry.yarnpkg.com/react-dropzone/-/react-dropzone-11.2.4.tgz#391a8d2e41a8a974340f83524d306540192e3313"
+  integrity sha512-EGSvK2CxFTuc28WxwuJCICyuYFX8b+sRumwU6Bs6sTbElV2HtQkT0d6C+HEee6XfbjiLIZ+Th9uji27rvo2wGw==
+  dependencies:
+    attr-accept "^2.2.1"
+    file-selector "^0.2.2"
+    prop-types "^15.7.2"
+
 react-focus-lock@^2.2.1:
   version "2.4.1"
   resolved "https://registry.yarnpkg.com/react-focus-lock/-/react-focus-lock-2.4.1.tgz#e842cc93da736b5c5d331799012544295cbcee4f"
@@ -13768,7 +13810,7 @@ tslib@^1.0.0, tslib@^1.11.2, tslib@^1.13.0, tslib@^1.8.1, tslib@^1.9.0, tslib@^1
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.14.1.tgz#cf2d38bdc34a134bcaf1091c41f6619e2f672d00"
   integrity sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==
 
-tslib@^2.0.0:
+tslib@^2.0.0, tslib@^2.0.3:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.0.3.tgz#8e0741ac45fc0c226e58a17bfc3e64b9bc6ca61c"
   integrity sha512-uZtkfKblCEQtZKBF6EBXVZeQNl82yqtDQdv+eck8u7tdPxjLu2/lp5/uPW+um2tpuxINHWy3GhiccY7QgEaVHQ==

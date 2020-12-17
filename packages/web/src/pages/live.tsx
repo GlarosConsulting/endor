@@ -11,6 +11,7 @@ import {
   Button,
   Tooltip,
   useDisclosure,
+  Image,
 } from '@chakra-ui/core';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -50,6 +51,8 @@ const Live: React.FC = () => {
   const [deceased, setDeceased] = useState<IDeceased>({} as IDeceased);
   const [username, setUsername] = useState<string>('');
   const [message, setMessage] = useState<string>('');
+  const [rightImageFilename, setRightImageFilename] = useState<string>('');
+  const [leftImageFilename, setLeftImageFilename] = useState<string>('');
   const [messages, setMessages] = useState<IMessage[]>([] as IMessage[]);
 
   const messagesContainerRef = useRef<HTMLDivElement>(null);
@@ -99,6 +102,18 @@ const Live: React.FC = () => {
 
       setMessages(messagesResponse);
       scrollToLastMessage(true);
+    });
+
+    api.get('images?name=378x372').then(response => {
+      const { file } = response.data;
+
+      setRightImageFilename(file);
+    });
+
+    api.get('images?name=240x920').then(response => {
+      const { file } = response.data;
+
+      setLeftImageFilename(file);
     });
   }, [router.query.id]);
 
@@ -169,23 +184,20 @@ const Live: React.FC = () => {
           onClose={onCloseGetUsernameModal}
         />
 
-        <Flex
+        <Image
           gridArea="ad"
           borderRadius="md"
-          marginRight={{ xs: 0, lg: 4 }}
-          marginTop={{ xs: 4, lg: 0 }}
-          height={{ xs: 600, lg: '100%' }}
-          backgroundColor="white"
-          alignItems="center"
-          justifyContent="center"
-        >
-          Propaganda
-        </Flex>
-
+          marginTop={{ xs: 6, lg: 0 }}
+          marginBottom={{ xs: 8, lg: 0 }}
+          height={{ xs: 920, lg: '100%' }}
+          width={{ xs: '100%' }}
+          src={`${process.env.NEXT_PUBLIC_API_URL}/files/${leftImageFilename}`}
+        />
         <Flex
           gridArea="video"
           direction="column"
           marginRight={{ xs: 0, lg: 4 }}
+          marginLeft={{ xs: 0, lg: 4 }}
         >
           <iframe
             src={deceased.live_chat_link}
@@ -253,17 +265,13 @@ const Live: React.FC = () => {
           width="100%"
           height={{ xs: 900, lg: '100%' }}
         >
-          <Flex
+          <Image
             gridArea="ad"
             borderRadius="md"
             height={{ xs: 300, lg: '40%' }}
-            backgroundColor="white"
-            alignItems="center"
-            justifyContent="center"
             marginBottom={4}
-          >
-            Propaganda
-          </Flex>
+            src={`${process.env.NEXT_PUBLIC_API_URL}/files/${rightImageFilename}`}
+          />
 
           <Flex
             borderRadius="md"
