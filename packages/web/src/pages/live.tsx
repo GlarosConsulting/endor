@@ -51,8 +51,8 @@ const Live: React.FC = () => {
   const [deceased, setDeceased] = useState<IDeceased>({} as IDeceased);
   const [username, setUsername] = useState<string>('');
   const [message, setMessage] = useState<string>('');
-  const [rightImageFilename, setRightImageFilename] = useState<string>('');
-  const [leftImageFilename, setLeftImageFilename] = useState<string>('');
+  // const [rightImageFilename, setRightImageFilename] = useState<string>('');
+  // const [leftImageFilename, setLeftImageFilename] = useState<string>('');
   const [messages, setMessages] = useState<IMessage[]>([] as IMessage[]);
 
   const messagesContainerRef = useRef<HTMLDivElement>(null);
@@ -104,17 +104,17 @@ const Live: React.FC = () => {
       scrollToLastMessage(true);
     });
 
-    api.get('images?name=378x372').then(response => {
-      const { file } = response.data;
+    // api.get('images?name=378x372').then(response => {
+    //   const { file } = response.data;
 
-      setRightImageFilename(file);
-    });
+    //   setRightImageFilename(file);
+    // });
 
-    api.get('images?name=240x920').then(response => {
-      const { file } = response.data;
+    // api.get('images?name=240x920').then(response => {
+    //   const { file } = response.data;
 
-      setLeftImageFilename(file);
-    });
+    //   setLeftImageFilename(file);
+    // });
   }, [router.query.id]);
 
   const onSaveUsername = useCallback(
@@ -191,7 +191,7 @@ const Live: React.FC = () => {
           marginBottom={{ xs: 8, lg: 0 }}
           height={{ xs: 920, lg: '100%' }}
           width={{ xs: '100%' }}
-          src={`${process.env.NEXT_PUBLIC_API_URL}/files/${leftImageFilename}`}
+          src="https://drive.google.com/file/d/1xN3cLlRTXlIUQEF5cpOz2x9GAgwh6F3D/view?usp=sharing"
         />
         <Flex
           gridArea="video"
@@ -270,7 +270,7 @@ const Live: React.FC = () => {
             borderRadius="md"
             height={{ xs: 300, lg: '40%' }}
             marginBottom={4}
-            src={`${process.env.NEXT_PUBLIC_API_URL}/files/${rightImageFilename}`}
+            src="https://drive.google.com/file/d/1WZMrn0giL9gs1vRax95QYvjHYnbwDONe/view?usp=sharing"
           />
 
           <Flex
