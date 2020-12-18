@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router';
 import React, { useCallback, useRef } from 'react';
 
 import { Box, Button, Flex, useToast } from '@chakra-ui/core';
@@ -16,6 +17,7 @@ import getValidationErrors from '@/utils/getValidationErrors';
 const ImagesSettings: React.FC = () => {
   const toast = useToast();
   const formRef = useRef<FormHandles>(null);
+  const router = useRouter();
 
   const SUPPORTED_FORMATS = ['image/jpg', 'image/jpeg', 'image/png'];
 
@@ -56,6 +58,16 @@ const ImagesSettings: React.FC = () => {
         headers: {
           'content-type': 'multipart/form-data',
         },
+      });
+
+      router.replace('/register/cemeteries');
+
+      toast({
+        position: 'top',
+        status: 'success',
+        title: 'Imagem importada.',
+        description:
+          'Imagem já está disponível para os usuários na tela de live.',
       });
 
       reset();
@@ -132,7 +144,7 @@ const ImagesSettings: React.FC = () => {
             <Flex height={300} width="100%" marginY={4}>
               <Dropzone name="file" />
             </Flex>
-            <Button variantColor="green" width={300} type="submit">
+            <Button isDisabled variantColor="green" width={300} type="submit">
               Hospedar imagem
             </Button>
           </Form>

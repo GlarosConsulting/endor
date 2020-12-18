@@ -351,7 +351,6 @@ const CreateDeceasedModal: React.FC<ICreateDeceasedModalProps> = ({
                   borderColor: 'gray.400',
                   bg: 'white',
                 }}
-                onChange={handleCemeteryChange}
               >
                 {cemeteries.map(cemetery => (
                   <option key={cemetery.id} value={cemetery.id}>
