@@ -8,10 +8,6 @@ export default class ImagesController {
     const { name } = request.body;
     const file = request.file.filename;
 
-    console.log(`request - ${request}`);
-    console.log(`file - ${file}`);
-    console.log(`file - ${request.file.filename}`);
-
     const createImage = container.resolve(CreateImagesService);
 
     const image = await createImage.execute({

@@ -9,7 +9,6 @@ const employeesController = new EmployeesController();
 
 employeesRouter.post(
   '/',
-  ensureAuthenticated,
   celebrate({
     [Segments.BODY]: {
       name: Joi.string().required(),
