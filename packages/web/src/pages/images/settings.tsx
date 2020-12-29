@@ -144,7 +144,7 @@ const ImagesSettings: React.FC = () => {
             <Flex height={300} width="100%" marginY={4}>
               <Dropzone name="file" />
             </Flex>
-            <Button isDisabled variantColor="green" width={300} type="submit">
+            <Button variantColor="green" width={300} type="submit">
               Hospedar imagem
             </Button>
           </Form>
