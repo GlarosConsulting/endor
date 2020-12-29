@@ -49,7 +49,8 @@ jobs:
           script: |
             cd ~/app/endor
             yarn
-            yarn server typeorm migration:run
+            cd packages/server
+            ./node_modules/.bin/typeorm migration:run
             pm2 restart endor-api
             
       
