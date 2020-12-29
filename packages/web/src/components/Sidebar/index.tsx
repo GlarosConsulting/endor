@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import React, { useCallback, useState } from 'react';
 import {
   FiPower,
@@ -32,7 +31,6 @@ interface ISidebarProps {
 
 const Sidebar: React.FC<ISidebarProps> = () => {
   const { logOut, user } = useAuthentication();
-  const router = useRouter();
   const [navBarCollapsed, setNavBarCollapsed] = useState<boolean>(false);
 
   const handleCollapseSideBar = useCallback(() => {
@@ -79,7 +77,7 @@ const Sidebar: React.FC<ISidebarProps> = () => {
               {user?.role !== 'administrador' ? (
                 <></>
               ) : (
-                <Link href={router.pathname} /* href="/images/settings" */>
+                <Link href="/images/settings">
                   <MenuItem icon={<FiSettings />}>
                     Configurar propagandas
                   </MenuItem>

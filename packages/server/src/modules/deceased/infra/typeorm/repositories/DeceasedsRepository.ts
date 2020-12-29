@@ -1,4 +1,5 @@
-import { getRepository, Like, Repository } from 'typeorm';
+import formatISO from 'date-fns/formatISO';
+import { getRepository, Like, MoreThan, Repository } from 'typeorm';
 
 import ICreateDeceasedDTO from '@modules/deceased/dtos/ICreateDeceasedDTO';
 import IDeceasedsRepository from '@modules/deceased/repositories/IDeceasedsRepository';
@@ -28,6 +29,7 @@ class DeceasedsRepository implements IDeceasedsRepository {
 
   public async findAll(): Promise<Deceased[] | undefined> {
     const deceaseds = await this.ormRepository.find({
+      where: { funeral_final_date: MoreThan(formatISO(Date.now())) },
       relations: [
         'responsible',
         'funeral_location',
