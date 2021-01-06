@@ -4,9 +4,12 @@ import { container } from 'tsyringe';
 
 import AppError from '@shared/errors/AppError';
 
+import CompaniesRepository from '@modules/companies/infra/typeorm/repositories/CompaniesRepository';
 import CreateDeceasedService from '@modules/deceased/services/CreateDeceasedService';
 import CreateLiveLinkService from '@modules/deceased/services/CreateLiveLinkService';
+import ListAllDeceasedService from '@modules/deceased/services/ListAllDeceasedService';
 import ListDeceasedService from '@modules/deceased/services/ListDeceasedService';
+import EmployeesRepository from '@modules/employees/infra/typeorm/repositories/EmployeesRepository';
 import FuneralsRepository from '@modules/funerals/infra/typeorm/repositories/FuneralsRepository';
 
 export default class DeceasedController {
@@ -25,6 +28,8 @@ export default class DeceasedController {
     const createDeceased = container.resolve(CreateDeceasedService);
 
     const funeralsRepository = new FuneralsRepository();
+    const employeesRepository = new EmployeesRepository();
+    const companiesRepository = new CompaniesRepository();
 
     const funeral = await funeralsRepository.findById(funeral_location_id);
 
@@ -36,6 +41,32 @@ export default class DeceasedController {
 
     const live_chat_link = await createLiveLink.execute(url_cam);
 
+    const { user } = request;
+
+    const userData = await employeesRepository.findById(user.id);
+
+    if (!userData) {
+      throw new AppError('User not found.');
+    }
+
+    let { company_id } = userData;
+
+    const company = await companiesRepository.findById(company_id);
+
+    if (!company) {
+      throw new AppError('Company not found.');
+    }
+
+    if (!company.isFuneral) {
+      company_id = request.body.company_id;
+    }
+
+    const companyByBodyId = await companiesRepository.findById(company_id);
+
+    if (!companyByBodyId?.isFuneral) {
+      throw new AppError('Company must be a funeral.');
+    }
+
     const deceased = await createDeceased.execute({
       name,
       responsible_id,
@@ -45,6 +76,7 @@ export default class DeceasedController {
       funeral_location_id,
       sepulting_location_id,
       live_chat_link,
+      company_id,
     });
 
     return response.json(classToClass(deceased));
@@ -58,18 +90,52 @@ export default class DeceasedController {
 
     let deceaseds;
 
-    if (!queryParams.name) {
-      deceaseds = await listDeceaseds.execute({});
+    const employeesRepository = new EmployeesRepository();
+    const companiesRepository = new CompaniesRepository();
+
+    const { user } = request;
+
+    const userData = await employeesRepository.findById(user.id);
+
+    if (!userData) {
+      throw new AppError('User not found.');
+    }
+
+    let company_id;
+
+    if (!queryParams.company_id) {
+      company_id = userData.company_id;
+    } else {
+      company_id = queryParams.company_id.toString();
+    }
+
+    const company = await companiesRepository.findById(company_id);
+
+    if (!company) {
+      throw new AppError('Company not found.');
+    }
+
+    if (!company.isFuneral) {
+      const listAllDeceased = container.resolve(ListAllDeceasedService);
+
+      if (!queryParams.name) {
+        deceaseds = await listAllDeceased.execute({});
+      } else {
+        name = String(queryParams.name);
+
+        deceaseds = await listAllDeceased.execute({ name });
+      }
+    } else if (!queryParams.name) {
+      deceaseds = await listDeceaseds.execute({ company_id });
     } else {
       try {
         name = String(queryParams.name);
 
-        deceaseds = await listDeceaseds.execute({ name });
+        deceaseds = await listDeceaseds.execute({ name, company_id });
       } catch (err) {
         throw new AppError(err);
       }
     }
-
     return response.json(deceaseds);
   }
 }

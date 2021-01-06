@@ -7,6 +7,7 @@ interface IRequest {
   name: string;
   url_cam: string;
   cemetery_id: string;
+  company_id: string;
 }
 
 @injectable()
@@ -20,11 +21,13 @@ class CreateFuneralService {
     name,
     url_cam,
     cemetery_id,
+    company_id,
   }: IRequest): Promise<Funeral> {
     const funeral = await this.funeralsRepository.create({
       name,
       url_cam,
       cemetery_id,
+      company_id,
     });
 
     return funeral;

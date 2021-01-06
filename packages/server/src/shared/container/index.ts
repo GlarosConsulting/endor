@@ -6,6 +6,8 @@ import './providers';
 
 import CemeteriesRepository from '@modules/cemeteries/infra/typeorm/repositories/CemeteriesRepository';
 import ICemeteriesRepository from '@modules/cemeteries/repositories/ICemeteriesRepository';
+import CompaniesRepository from '@modules/companies/infra/typeorm/repositories/CompaniesRepository';
+import ICompaniesRepository from '@modules/companies/repositories/ICompaniesRepository';
 import CustomersRepository from '@modules/customers/infra/typeorm/repositories/CustomersRepository';
 import ICustomersRepository from '@modules/customers/repositories/ICustomersRepository';
 import DeceasedRepository from '@modules/deceased/infra/typeorm/repositories/DeceasedsRepository';
@@ -20,6 +22,11 @@ import IImagesRepository from '@modules/images/repositories/IImagesRepository';
 container.registerSingleton<ICustomersRepository>(
   'CustomersRepository',
   CustomersRepository,
+);
+
+container.registerSingleton<ICompaniesRepository>(
+  'CompaniesRepository',
+  CompaniesRepository,
 );
 
 container.registerSingleton<ICemeteriesRepository>(

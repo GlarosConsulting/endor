@@ -15,6 +15,7 @@ interface IUser {
   name: string;
   email: string;
   role: string;
+  company_id: string;
 }
 
 export default interface ISession {

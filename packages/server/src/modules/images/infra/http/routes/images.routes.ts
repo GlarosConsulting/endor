@@ -6,7 +6,7 @@ import uploadConfig from '@config/upload';
 
 import ensureAuthenticated from '@modules/cemeteries/infra/http/middlewares/ensureAuthenticated';
 
-import FindImageByName from '../controllers/FindImageByName';
+import FindImageByName from '../controllers/FindImageByNameAndCompany';
 import ImagesController from '../controllers/ImagesController';
 
 const imagesRouter = Router();
@@ -16,7 +16,12 @@ const findImageByName = new FindImageByName();
 
 const upload = multer(uploadConfig.multer);
 
-imagesRouter.post('/', upload.single('file'), imagesController.create);
+imagesRouter.post(
+  '/',
+  ensureAuthenticated,
+  upload.single('file'),
+  imagesController.create,
+);
 
 imagesRouter.get(
   '/',
@@ -24,6 +29,7 @@ imagesRouter.get(
   celebrate({
     [Segments.QUERY]: {
       name: Joi.string(),
+      company_id: Joi.string().allow(null),
     },
   }),
   findImageByName.show,

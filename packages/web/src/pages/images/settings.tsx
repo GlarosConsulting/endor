@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Box, Button, Flex, useToast } from '@chakra-ui/core';
 import { FormHandles } from '@unform/core';
@@ -11,15 +11,41 @@ import Select from '@/components/Select';
 import SEO from '@/components/SEO';
 import Sidebar from '@/components/Sidebar';
 import Title from '@/components/Title';
+import { useAuthentication } from '@/hooks/authentication';
+import ICompany from '@/interfaces/Company';
 import api from '@/services/api';
 import getValidationErrors from '@/utils/getValidationErrors';
 
 const ImagesSettings: React.FC = () => {
+  const { user } = useAuthentication();
   const toast = useToast();
   const formRef = useRef<FormHandles>(null);
   const router = useRouter();
 
   const SUPPORTED_FORMATS = ['image/jpg', 'image/jpeg', 'image/png'];
+
+  const [companies, setCompanies] = useState<ICompany[]>([] as ICompany[]);
+  const [isFuneral, setIsFuneral] = useState<boolean>(true);
+
+  useEffect(() => {
+    if (user?.company_id) {
+      api.get(`companies/${user.company_id}`).then(response => {
+        const company = response.data;
+
+        setIsFuneral(company.isFuneral);
+
+        if (!company.isFuneral) {
+          api.get('companies').then(companiesResponse => {
+            const companiesData = companiesResponse.data.filter(
+              data => data.isFuneral,
+            );
+
+            setCompanies(companiesData);
+          });
+        }
+      });
+    }
+  }, [user, isFuneral]);
 
   const handleSubmit = useCallback(async (data, { reset }) => {
     try {
@@ -27,6 +53,9 @@ const ImagesSettings: React.FC = () => {
 
       const schemaFile = Yup.object().shape({
         name: Yup.string().required('Nome obrigatório'),
+        company_id: !isFuneral
+          ? Yup.string().uuid().required('Nome obrigatório')
+          : Yup.string().uuid(),
         file: Yup.mixed().test(
           'fileType',
           'O arquivo deve ser uma imagem.',
@@ -50,6 +79,10 @@ const ImagesSettings: React.FC = () => {
       await schemaFile.validate(data, { abortEarly: false });
 
       const formData = new FormData();
+
+      if (!isFuneral) {
+        formData.append('company_id', data.company_id);
+      }
 
       formData.append('file', data.file);
       formData.append('name', data.name);
@@ -124,23 +157,47 @@ const ImagesSettings: React.FC = () => {
           </Flex>
 
           <Form onSubmit={handleSubmit} ref={formRef}>
-            <Select
-              name="name"
-              height={8}
-              backgroundColor="White"
-              placeholder="Selecione a resolução da sua imagem"
-              containerProps={{
-                width: 400,
-                height: 10,
-                border: '1px solid',
-                borderColor: 'gray.400',
-                bg: 'white',
-              }}
-            >
-              <option value="378x372">378x372</option>
-              <option value="240x920">240x920</option>
-            </Select>
+            <Flex>
+              <Select
+                name="name"
+                height={8}
+                backgroundColor="White"
+                placeholder="Selecione a resolução da sua imagem"
+                containerProps={{
+                  width: 400,
+                  height: 10,
+                  border: '1px solid',
+                  borderColor: 'gray.400',
+                  bg: 'white',
+                }}
+              >
+                <option value="378x372">378x372</option>
+                <option value="240x920">240x920</option>
+              </Select>
 
+              {!isFuneral && (
+                <Select
+                  height={8}
+                  name="company_id"
+                  placeholder="Selecione o cliente"
+                  background="white"
+                  containerProps={{
+                    width: 400,
+                    height: 10,
+                    marginLeft: 4,
+                    border: '1px solid',
+                    borderColor: 'gray.400',
+                    bg: 'white',
+                  }}
+                >
+                  {companies.map(company => (
+                    <option value={company.id} key={company.id}>
+                      {company.name}
+                    </option>
+                  ))}
+                </Select>
+              )}
+            </Flex>
             <Flex height={300} width="100%" marginY={4}>
               <Dropzone name="file" />
             </Flex>

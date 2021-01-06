@@ -57,6 +57,13 @@ const Sidebar: React.FC<ISidebarProps> = () => {
           <SidebarContent>
             <Menu iconShape="circle">
               <SubMenu icon={<FiEdit />} title="Registrar">
+                {user?.role !== 'master' ? (
+                  <></>
+                ) : (
+                  <Link href="/register/companies">
+                    <MenuItem>Funerárias</MenuItem>
+                  </Link>
+                )}
                 <Link href="/register/cemeteries">
                   <MenuItem>Cemitérios</MenuItem>
                 </Link>
@@ -74,7 +81,7 @@ const Sidebar: React.FC<ISidebarProps> = () => {
                 </Link>
               </SubMenu>
 
-              {user?.role !== 'administrador' ? (
+              {user?.role !== 'gerente' && user?.role !== 'administrador' ? (
                 <></>
               ) : (
                 <Link href="/images/settings">

@@ -18,6 +18,7 @@ customersRouter.post(
       gender: Joi.string().required(),
       cpf: Joi.string().length(11),
       birth_date: Joi.date().required(),
+      company_id: Joi.string().uuid(),
     },
   }),
   customersController.create,
@@ -29,6 +30,7 @@ customersRouter.get(
   celebrate({
     [Segments.QUERY]: {
       name: Joi.string().allow(null),
+      company_id: Joi.string().allow(null),
     },
   }),
   customersController.index,

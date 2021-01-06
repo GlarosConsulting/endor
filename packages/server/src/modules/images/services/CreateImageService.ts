@@ -8,6 +8,7 @@ import IImagesRepository from '../repositories/IImagesRepository';
 interface IRequest {
   name: string;
   file: string;
+  company_id: string;
 }
 
 @injectable()
@@ -20,14 +21,18 @@ export default class CreateImageService {
     private imagesRepository: IImagesRepository,
   ) {}
 
-  public async execute({ name, file }: IRequest): Promise<Image> {
-    const img = await this.imagesRepository.findByName(name);
+  public async execute({ name, company_id, file }: IRequest): Promise<Image> {
+    const img = await this.imagesRepository.findByNameAndCompany(
+      name,
+      company_id,
+    );
 
     if (!img) {
       const filename = await this.storageProvider.saveFile(file);
 
       const createdImage = await this.imagesRepository.create({
         name,
+        company_id,
         file: filename,
       });
 

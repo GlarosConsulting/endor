@@ -27,6 +27,8 @@ import DatePicker from '@/components/DatePicker';
 import Input from '@/components/Input';
 import Select from '@/components/Select';
 import TimePicker from '@/components/TimePicker';
+import { useAuthentication } from '@/hooks/authentication';
+import ICompany from '@/interfaces/Company';
 import getValidationErrors from '@/utils/getValidationErrors';
 
 import api from '../../../services/api';
@@ -57,6 +59,7 @@ interface IFormData {
   funeral_final_time: string;
   sepulting_date: Date;
   sepulting_time: string;
+  company_id?: string;
 }
 
 interface ICreateDeceasedModalProps {
@@ -75,11 +78,14 @@ const CreateDeceasedModal: React.FC<ICreateDeceasedModalProps> = ({
 }) => {
   const formRef = useRef<FormHandles>(null);
 
+  const { user } = useAuthentication();
   const toast = useToast();
 
   const [cemeteries, setCemeteries] = useState<ICemetery[]>([] as ICemetery[]);
   const [customers, setCustomers] = useState<ICustomers[]>([] as ICustomers[]);
   const [funerals, setFunerals] = useState<IFuneral[]>([] as IFuneral[]);
+  const [companies, setCompanies] = useState<ICompany[]>([] as ICompany[]);
+  const [isFuneral, setIsFuneral] = useState<boolean>(true);
 
   const [createdLink, setCreatedLink] = useState<string>('');
 
@@ -88,14 +94,35 @@ const CreateDeceasedModal: React.FC<ICreateDeceasedModalProps> = ({
   >(null);
 
   useEffect(() => {
+    if (user?.company_id) {
+      api.get(`companies/${user.company_id}`).then(response => {
+        const company = response.data;
+
+        setIsFuneral(company.isFuneral);
+
+        if (!company.isFuneral) {
+          api.get('companies').then(companiesResponse => {
+            const companiesData = companiesResponse.data.filter(
+              data => data.isFuneral,
+            );
+
+            setCompanies(companiesData);
+          });
+        }
+
+        if (company.isFuneral) {
+          api.get('cemeteries').then(cemeteriesResponse => {
+            const cemeteriesData: ICemetery[] = cemeteriesResponse.data;
+
+            setCemeteries(cemeteriesData);
+          });
+        }
+      });
+    }
+
     setRequestStatus(null);
+
     setFunerals([] as IFuneral[]);
-
-    api.get('cemeteries').then(response => {
-      const cemeteriesResponse: ICemetery[] = response.data;
-
-      setCemeteries(cemeteriesResponse);
-    });
 
     api.get('customers').then(response => {
       const customersResponse: ICemetery[] = response.data;
@@ -107,7 +134,6 @@ const CreateDeceasedModal: React.FC<ICreateDeceasedModalProps> = ({
   const handleSubmit = useCallback(async (data: IFormData, event) => {
     try {
       formRef.current?.setErrors({});
-      console.log(data);
       const schema = Yup.object().shape({
         name: Yup.string().required('Nome do falecido obrigatório'),
         responsible_id: Yup.string().uuid().required('Responsável obrigatório'),
@@ -131,6 +157,9 @@ const CreateDeceasedModal: React.FC<ICreateDeceasedModalProps> = ({
         sepulting_time: Yup.string().required(
           'Horário do sepultamento obrigatório',
         ),
+        company_id: !isFuneral
+          ? Yup.string().uuid().required('Nome obrigatório')
+          : Yup.string().uuid(),
       });
 
       await schema.validate(data, { abortEarly: false });
@@ -167,15 +196,30 @@ const CreateDeceasedModal: React.FC<ICreateDeceasedModalProps> = ({
         ),
       );
 
-      const submitData = {
-        name: data.name,
-        responsible_id: data.responsible_id,
-        funeral_initial_date: funeralInitialDateTime,
-        funeral_final_date: funeralFinalDateTime,
-        sepulting_date: sepultingDateTime,
-        funeral_location_id: data.funeral_location_id,
-        sepulting_location_id: data.sepulting_location_id,
-      };
+      let submitData;
+
+      if (data?.company_id) {
+        submitData = {
+          name: data.name,
+          responsible_id: data.responsible_id,
+          funeral_initial_date: funeralInitialDateTime,
+          funeral_final_date: funeralFinalDateTime,
+          sepulting_date: sepultingDateTime,
+          funeral_location_id: data.funeral_location_id,
+          sepulting_location_id: data.sepulting_location_id,
+          company_id: data.company_id,
+        };
+      } else {
+        submitData = {
+          name: data.name,
+          responsible_id: data.responsible_id,
+          funeral_initial_date: funeralInitialDateTime,
+          funeral_final_date: funeralFinalDateTime,
+          sepulting_date: sepultingDateTime,
+          funeral_location_id: data.funeral_location_id,
+          sepulting_location_id: data.sepulting_location_id,
+        };
+      }
 
       const response: { data: { id: string } } = await api.post(
         'deceaseds',
@@ -239,6 +283,26 @@ const CreateDeceasedModal: React.FC<ICreateDeceasedModalProps> = ({
     [setFunerals],
   );
 
+  const handleCompanyChange = useCallback(
+    async e => {
+      const selected = e.target.value;
+
+      if (!selected) {
+        setCemeteries([]);
+        setFunerals([]);
+
+        return;
+      }
+
+      const response = await api.get(`/cemeteries/?company_id=${selected}`);
+
+      const cemeteriesResponse = response.data;
+
+      setCemeteries(cemeteriesResponse);
+    },
+    [setCemeteries],
+  );
+
   return (
     <Modal
       size="full"
@@ -267,6 +331,25 @@ const CreateDeceasedModal: React.FC<ICreateDeceasedModalProps> = ({
         <Form ref={formRef} onSubmit={handleSubmit}>
           <ModalBody paddingBottom={4}>
             <Flex>
+              {!isFuneral && (
+                <Select
+                  backgroundColor="White"
+                  name="company_id"
+                  placeholder="Selecione a funerária"
+                  onChange={handleCompanyChange}
+                  containerProps={{
+                    width: 500,
+                    marginRight: '16px',
+                    border: '1px solid',
+                    borderColor: 'gray.400',
+                    bg: 'white',
+                  }}
+                >
+                  {companies.map(company => (
+                    <option value={company.id}>{company.name}</option>
+                  ))}
+                </Select>
+              )}
               <Input
                 name="name"
                 placeholder="Nome do falecido"
@@ -299,7 +382,8 @@ const CreateDeceasedModal: React.FC<ICreateDeceasedModalProps> = ({
 
               <Select
                 name="cemetery_for_funeral_selection_id"
-                placeholder="Local da sala do velório"
+                placeholder="Local do velório"
+                isDisabled={!(cemeteries.length > 0)}
                 bg="white"
                 containerProps={{
                   marginLeft: 4,

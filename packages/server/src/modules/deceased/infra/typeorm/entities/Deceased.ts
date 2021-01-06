@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 
 import Cemetery from '../../../../cemeteries/infra/typeorm/entities/Cemetery';
+import Company from '../../../../companies/infra/typeorm/entities/Company';
 import Customer from '../../../../customers/infra/typeorm/entities/Customer';
 import Funeral from '../../../../funerals/infra/typeorm/entities/Funeral';
 
@@ -52,6 +53,13 @@ export default class Deceased {
   @ManyToOne(() => Cemetery, cemetery => cemetery.deceased_buried)
   @JoinColumn({ name: 'sepulting_location_id' })
   sepulting_location: Cemetery;
+
+  @Column()
+  company_id: string;
+
+  @ManyToOne(() => Company, company => company.cemeteries)
+  @JoinColumn({ name: 'company_id' })
+  company: Company;
 
   @CreateDateColumn()
   created_at: Date;

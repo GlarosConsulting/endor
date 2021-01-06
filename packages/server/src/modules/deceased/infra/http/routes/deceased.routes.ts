@@ -21,6 +21,7 @@ deceasedsRouter.post(
       sepulting_date: Joi.date().required(),
       funeral_location_id: Joi.string().uuid().required(),
       sepulting_location_id: Joi.string().uuid().required(),
+      company_id: Joi.string().uuid(),
     },
   }),
   deceasedsController.create,
@@ -40,8 +41,8 @@ deceasedsRouter.get(
 deceasedsRouter.get(
   '/:id',
   celebrate({
-    [Segments.QUERY]: {
-      name: Joi.string().allow(null),
+    [Segments.PARAMS]: {
+      id: Joi.string().required(),
     },
   }),
   findByDeceasedIdController.index,

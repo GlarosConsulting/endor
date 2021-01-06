@@ -23,7 +23,9 @@ import { Form } from '@unform/web';
 import * as Yup from 'yup';
 
 import Input from '@/components/Input';
+import Select from '@/components/Select';
 import { useAuthentication } from '@/hooks/authentication';
+import ICompany from '@/interfaces/Company';
 import getValidationErrors from '@/utils/getValidationErrors';
 
 import api from '../../../services/api';
@@ -33,6 +35,7 @@ interface IFormData {
   email: string;
   password: string;
   passwordConfirmation: string;
+  company_id: string;
 }
 
 interface ICreateEmpployeesModalProps {
@@ -54,11 +57,30 @@ const CreateEmpployeesModal: React.FC<ICreateEmpployeesModalProps> = ({
   const toast = useToast();
 
   const [userRole, setUserRole] = useState<string | null>(null);
-  const [admRole, setAdmRole] = useState<boolean>(false);
+  const [mngRole, setmngRole] = useState<boolean>(false);
+
+  const [companies, setCompanies] = useState<ICompany[]>([] as ICompany[]);
+  const [isFuneral, setIsFuneral] = useState<boolean>(true);
 
   useEffect(() => {
-    setUserRole(user.role);
-  }, []);
+    if (user?.company_id) {
+      setUserRole(user?.role);
+
+      api.get(`companies/${user.company_id}`).then(response => {
+        const company = response.data;
+
+        setIsFuneral(company.isFuneral);
+
+        if (!company.isFuneral) {
+          api.get('companies').then(companiesResponse => {
+            const companiesData = companiesResponse.data;
+
+            setCompanies(companiesData);
+          });
+        }
+      });
+    }
+  }, [user, isFuneral]);
 
   const handleSubmit = useCallback(
     async (data: IFormData, event) => {
@@ -69,6 +91,9 @@ const CreateEmpployeesModal: React.FC<ICreateEmpployeesModalProps> = ({
           name: Yup.string().required('Nome obrigatório'),
           email: Yup.string().email().required('E-mail obrigatória'),
           password: Yup.string().required('Senha obrigatório'),
+          company_id: !isFuneral
+            ? Yup.string().uuid().required('Empresa obrigatória')
+            : Yup.string().uuid(),
           passwordConfirmation: Yup.string().oneOf(
             [Yup.ref('password'), null],
             'As senhas devem ser iguais',
@@ -79,10 +104,28 @@ const CreateEmpployeesModal: React.FC<ICreateEmpployeesModalProps> = ({
 
         let requestBodyData;
 
-        if (admRole) {
+        if (!isFuneral) {
+          if (mngRole) {
+            requestBodyData = {
+              name: data.name,
+              role: 'gerente',
+              email: data.email,
+              password: data.password,
+              company_id: data.company_id,
+            };
+          } else {
+            requestBodyData = {
+              name: data.name,
+              role: 'funcionario',
+              email: data.email,
+              password: data.password,
+              company_id: data.company_id,
+            };
+          }
+        } else if (mngRole) {
           requestBodyData = {
             name: data.name,
-            role: 'administrador',
+            role: 'gerente',
             email: data.email,
             password: data.password,
           };
@@ -94,7 +137,6 @@ const CreateEmpployeesModal: React.FC<ICreateEmpployeesModalProps> = ({
             password: data.password,
           };
         }
-
         await api.post('employees', requestBodyData);
 
         toast({
@@ -125,7 +167,7 @@ const CreateEmpployeesModal: React.FC<ICreateEmpployeesModalProps> = ({
         });
       }
     },
-    [admRole],
+    [mngRole],
   );
 
   return (
@@ -182,18 +224,36 @@ const CreateEmpployeesModal: React.FC<ICreateEmpployeesModalProps> = ({
                 marginTop: 3,
               }}
             />
+
+            {!isFuneral && (
+              <Select
+                backgroundColor="White"
+                name="company_id"
+                placeholder="Selecione a funerária"
+                containerProps={{
+                  marginTop: 3,
+                  border: '1px solid',
+                  borderColor: 'gray.400',
+                  bg: 'white',
+                }}
+              >
+                {companies.map(company => (
+                  <option value={company.id}>{company.name}</option>
+                ))}
+              </Select>
+            )}
           </ModalBody>
 
           <ModalFooter>
             <Checkbox
               color="green"
-              hidden={userRole !== 'administrador'}
-              isChecked={admRole}
+              hidden={userRole !== 'administrador' && userRole !== 'master'}
+              isChecked={mngRole}
               onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                setAdmRole(event.target.checked);
+                setmngRole(event.target.checked);
               }}
             >
-              Administrador
+              Gerente
             </Checkbox>
             <Button variant="ghost" onClick={onClose} marginRight={4}>
               Cancelar

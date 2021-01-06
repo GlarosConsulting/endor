@@ -29,8 +29,22 @@ class FuneralsRepository implements IFuneralsRepository {
     return funeral;
   }
 
+  public async findAllByCompany(
+    company_id: string,
+  ): Promise<Funeral[] | undefined> {
+    const funerals = await this.ormRepository.find({
+      where: {
+        company_id,
+      },
+      relations: ['cemetery'],
+    });
+
+    return funerals;
+  }
+
   public async findAll(): Promise<Funeral[] | undefined> {
     const funerals = await this.ormRepository.find({
+      where: {},
       relations: ['cemetery'],
     });
 

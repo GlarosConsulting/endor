@@ -8,6 +8,7 @@ import IImagesRepository from '../repositories/IImagesRepository';
 
 interface IRequest {
   name: string;
+  company_id: string;
 }
 
 @injectable()
@@ -20,8 +21,11 @@ export default class CreateImageService {
     private imagesRepository: IImagesRepository,
   ) {}
 
-  public async execute({ name }: IRequest): Promise<Image> {
-    const img = await this.imagesRepository.findByName(name);
+  public async execute({ name, company_id }: IRequest): Promise<Image> {
+    const img = await this.imagesRepository.findByNameAndCompany(
+      name,
+      company_id,
+    );
 
     if (!img) {
       throw new AppError('No image with that name.', 401);

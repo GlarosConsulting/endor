@@ -6,7 +6,11 @@ import {
   Index,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
+
+import Company from '@modules/companies/infra/typeorm/entities/Company';
 
 @Entity('employees')
 export default class Employee {
@@ -26,6 +30,13 @@ export default class Employee {
 
   @Column()
   role: string;
+
+  @Column()
+  company_id: string;
+
+  @ManyToOne(() => Company, company => company.cemeteries)
+  @JoinColumn({ name: 'company_id' })
+  company: Company;
 
   @CreateDateColumn()
   created_at: Date;

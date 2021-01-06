@@ -17,6 +17,7 @@ funeralsRouter.post(
       name: Joi.string().required(),
       url_cam: Joi.string().required(),
       cemetery_id: Joi.string().uuid().required(),
+      company_id: Joi.string().uuid(),
     },
   }),
   funeralsController.create,

@@ -14,6 +14,7 @@ import CreateEmployeesModal from '@/components/Modals/CreateEmployeesModal';
 import SEO from '@/components/SEO';
 import Sidebar from '@/components/Sidebar';
 import Table from '@/components/Table';
+import { useAuthentication } from '@/hooks/authentication';
 
 import api from '../../services/api';
 
@@ -80,6 +81,7 @@ const EMPLOYEES_TABLE_COLUMNS = [
 
 const Users: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
+  const { user } = useAuthentication();
 
   const {
     isOpen: isCreateCustomersOpen,
@@ -331,17 +333,19 @@ const Users: React.FC = () => {
                       </Button>
                     </Tooltip>
 
-                    <Tooltip
-                      label="Adicionar novo funcionário."
-                      aria-label="Adicionar novo funcionário."
-                    >
-                      <Button
-                        marginLeft={4}
-                        onClick={handleOpenCreateEmployeesModal}
+                    {user?.role !== 'funcionario' && (
+                      <Tooltip
+                        label="Adicionar novo funcionário."
+                        aria-label="Adicionar novo funcionário."
                       >
-                        <FiUserPlus />
-                      </Button>
-                    </Tooltip>
+                        <Button
+                          marginLeft={4}
+                          onClick={handleOpenCreateEmployeesModal}
+                        >
+                          <FiUserPlus />
+                        </Button>
+                      </Tooltip>
+                    )}
                   </Flex>
 
                   <CreateEmployeesModal

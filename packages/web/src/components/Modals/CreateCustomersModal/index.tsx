@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import {
   Button,
@@ -18,6 +18,8 @@ import * as Yup from 'yup';
 import DatePicker from '@/components/DatePicker';
 import Input from '@/components/Input';
 import Select from '@/components/Select';
+import { useAuthentication } from '@/hooks/authentication';
+import ICompany from '@/interfaces/Company';
 import getValidationErrors from '@/utils/getValidationErrors';
 
 import api from '../../../services/api';
@@ -47,7 +49,31 @@ const CreateCustomersModal: React.FC<ICreateCustomersModalProps> = ({
 }) => {
   const formRef = useRef<FormHandles>(null);
 
+  const { user } = useAuthentication();
   const toast = useToast();
+
+  const [companies, setCompanies] = useState<ICompany[]>([] as ICompany[]);
+  const [isFuneral, setIsFuneral] = useState<boolean>(true);
+
+  useEffect(() => {
+    if (user?.company_id) {
+      api.get(`companies/${user.company_id}`).then(response => {
+        const company = response.data;
+
+        setIsFuneral(company.isFuneral);
+
+        if (!company.isFuneral) {
+          api.get('companies').then(companiesResponse => {
+            const companiesData = companiesResponse.data.filter(
+              data => data.isFuneral,
+            );
+
+            setCompanies(companiesData);
+          });
+        }
+      });
+    }
+  }, [user, isFuneral]);
 
   const handleSubmit = useCallback(async (data: IFormData, event) => {
     try {
@@ -169,6 +195,24 @@ const CreateCustomersModal: React.FC<ICreateCustomersModalProps> = ({
               <option value="Masculino">Masculino</option>
               <option value="Feminino">Feminino</option>
             </Select>
+
+            {!isFuneral && (
+              <Select
+                backgroundColor="White"
+                name="company_id"
+                placeholder="Selecione a funerária"
+                containerProps={{
+                  border: '1px solid',
+                  marginTop: 3,
+                  borderColor: 'gray.400',
+                  bg: 'white',
+                }}
+              >
+                {companies.map(company => (
+                  <option value={company.id}>{company.name}</option>
+                ))}
+              </Select>
+            )}
           </ModalBody>
 
           <ModalFooter>

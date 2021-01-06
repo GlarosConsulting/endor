@@ -7,4 +7,5 @@ export default interface ICreateUserDTO {
   live_chat_link: string;
   funeral_location_id: string;
   sepulting_location_id: string;
+  company_id: string;
 }

@@ -19,6 +19,7 @@ import SEO from '@/components/SEO';
 import Sidebar from '@/components/Sidebar';
 import Table from '@/components/Table';
 import Title from '@/components/Title';
+import ICompany from '@/interfaces/Company';
 
 import { useAuthentication } from '../../hooks/authentication';
 import api from '../../services/api';
@@ -67,6 +68,9 @@ const Funerals: React.FC = () => {
   const [funerals, setFunerals] = useState<IFunerals[]>([] as IFunerals[]);
   const [userRole, setUserRole] = useState<string | null>(null);
 
+  const [companies, setCompanies] = useState<ICompany[]>([] as ICompany[]);
+  const [isFuneral, setIsFuneral] = useState<boolean>(true);
+
   const {
     isOpen: isCreateFuneralsOpen,
     onOpen: onOpenCreateFunerals,
@@ -90,7 +94,7 @@ const Funerals: React.FC = () => {
       const funeralsData: IFunerals[] = [];
 
       funeralsResponse.forEach(data => {
-        if (user.role === 'administrador') {
+        if (user.role !== 'funcionario') {
           funeralsData.push({
             id: data.id,
             name: data.name,
@@ -123,6 +127,24 @@ const Funerals: React.FC = () => {
   useEffect(() => {
     getFunerals();
 
+    if (user?.company_id) {
+      setUserRole(user?.role);
+
+      api.get(`companies/${user.company_id}`).then(response => {
+        const company = response.data;
+
+        setIsFuneral(company.isFuneral);
+
+        if (!company.isFuneral) {
+          api.get('companies').then(companiesResponse => {
+            const companiesData = companiesResponse.data;
+
+            setCompanies(companiesData);
+          });
+        }
+      });
+    }
+
     api.get('cemeteries').then(response => {
       const cemeteriesResponse: ICemeteries[] = response.data;
 
@@ -130,49 +152,90 @@ const Funerals: React.FC = () => {
 
       setCemeteries(cemeteriesResponse);
     });
-  }, [setCemeteries]);
+  }, [setCemeteries, user, isFuneral]);
 
   const handleSearchFunerals = useCallback(async (data, { reset }) => {
-    if (!data.cemetery_id_for_search) {
-      getFunerals();
-      return;
-    }
-
-    const response = await api.get(
-      `funerals/cemetery/${data.cemetery_id_for_search}`,
-    );
-
-    const funeralsResponse = response.data;
-    const funeralsData: IFunerals[] = [];
-
-    funeralsResponse.forEach(funeral => {
-      if (user.role === 'administrador') {
-        funeralsData.push({
-          id: funeral.id,
-          name: funeral.name,
-          url_cam: funeral.url_cam,
-          cemetery: funeral.cemetery.name,
-          edit_button: (
-            <Button
-              onClick={() => {
-                handleClickEditFunerlButton(funeral.id);
-              }}
-            >
-              <FiEdit />
-            </Button>
-          ),
-        });
-      } else {
-        funeralsData.push({
-          id: funeral.id,
-          name: funeral.name,
-          url_cam: funeral.url_cam,
-          cemetery: funeral.cemetery.name,
-        });
+    if (isFuneral) {
+      if (!data.cemetery_id_for_search) {
+        getFunerals();
+        return;
       }
-    });
 
-    setFunerals(funeralsData);
+      const response = await api.get(
+        `funerals/cemetery/${data.cemetery_id_for_search}`,
+      );
+
+      const funeralsResponse = response.data;
+      const funeralsData: IFunerals[] = [];
+
+      funeralsResponse.forEach(funeral => {
+        if (user.role !== 'funcionario') {
+          funeralsData.push({
+            id: funeral.id,
+            name: funeral.name,
+            url_cam: funeral.url_cam,
+            cemetery: funeral.cemetery.name,
+            edit_button: (
+              <Button
+                onClick={() => {
+                  handleClickEditFunerlButton(funeral.id);
+                }}
+              >
+                <FiEdit />
+              </Button>
+            ),
+          });
+        } else {
+          funeralsData.push({
+            id: funeral.id,
+            name: funeral.name,
+            url_cam: funeral.url_cam,
+            cemetery: funeral.cemetery.name,
+          });
+        }
+      });
+
+      setFunerals(funeralsData);
+    } else {
+      if (!data.company_id) {
+        getFunerals();
+        return;
+      }
+
+      const response = await api.get(`funerals?company_id=${data.company_id}`);
+
+      const funeralsResponse = response.data;
+      const funeralsData: IFunerals[] = [];
+
+      funeralsResponse.forEach(funeral => {
+        if (user.role !== 'funcionario') {
+          funeralsData.push({
+            id: funeral.id,
+            name: funeral.name,
+            url_cam: funeral.url_cam,
+            cemetery: funeral.cemetery.name,
+            edit_button: (
+              <Button
+                onClick={() => {
+                  handleClickEditFunerlButton(funeral.id);
+                }}
+              >
+                <FiEdit />
+              </Button>
+            ),
+          });
+        } else {
+          funeralsData.push({
+            id: funeral.id,
+            name: funeral.name,
+            url_cam: funeral.url_cam,
+            cemetery: funeral.cemetery.name,
+          });
+        }
+      });
+
+      setFunerals(funeralsData);
+    }
 
     reset();
   }, []);
@@ -209,25 +272,47 @@ const Funerals: React.FC = () => {
 
           <Form onSubmit={handleSearchFunerals} ref={formRef}>
             <Flex>
-              <Select
-                height={8}
-                backgroundColor="White"
-                name="cemetery_id_for_search"
-                placeholder="Selecione o cemitério"
-                containerProps={{
-                  width: 300,
-                  height: 10,
-                  border: '1px solid',
-                  borderColor: 'gray.400',
-                  bg: 'white',
-                }}
-              >
-                {cemeteries.map(cemetery => (
-                  <option key={cemetery.id} value={cemetery.id}>
-                    {cemetery.name}
-                  </option>
-                ))}
-              </Select>
+              {isFuneral ? (
+                <Select
+                  height={8}
+                  backgroundColor="White"
+                  name="cemetery_id_for_search"
+                  placeholder="Selecione o cemitério"
+                  containerProps={{
+                    width: 300,
+                    height: 10,
+                    border: '1px solid',
+                    borderColor: 'gray.400',
+                    bg: 'white',
+                  }}
+                >
+                  {cemeteries.map(cemetery => (
+                    <option key={cemetery.id} value={cemetery.id}>
+                      {cemetery.name}
+                    </option>
+                  ))}
+                </Select>
+              ) : (
+                <Select
+                  height={8}
+                  backgroundColor="White"
+                  name="company_id"
+                  placeholder="Selecione o cliente"
+                  containerProps={{
+                    width: 300,
+                    height: 10,
+                    border: '1px solid',
+                    borderColor: 'gray.400',
+                    bg: 'white',
+                  }}
+                >
+                  {companies.map(company => (
+                    <option key={company.id} value={company.id}>
+                      {company.name}
+                    </option>
+                  ))}
+                </Select>
+              )}
               <Tooltip
                 label="Pesquisar velórios por cemitério"
                 aria-label="Pesquisar velórios por cemitério"
@@ -242,7 +327,7 @@ const Funerals: React.FC = () => {
                 aria-label="Adicionar novo velório."
               >
                 <Button
-                  hidden={userRole !== 'administrador'}
+                  hidden={userRole === 'funcionario'}
                   onClick={onOpenCreateFunerals}
                   marginLeft={4}
                 >

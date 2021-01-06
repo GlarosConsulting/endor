@@ -11,6 +11,7 @@ interface IRequest {
   role?: string;
   email: string;
   password: string;
+  company_id: string;
 }
 
 @injectable()
@@ -28,6 +29,7 @@ class CreateEmployeesService {
     role,
     email,
     password,
+    company_id,
   }: IRequest): Promise<Employee> {
     const checkEmailExists = await this.employeesRepository.findByEmail(email);
 
@@ -44,6 +46,7 @@ class CreateEmployeesService {
         name,
         email,
         password: hashedPassword,
+        company_id,
       };
     } else {
       data = {
@@ -51,6 +54,7 @@ class CreateEmployeesService {
         role,
         email,
         password: hashedPassword,
+        company_id,
       };
     }
 
