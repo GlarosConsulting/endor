@@ -43,6 +43,7 @@ interface IDeceased {
   sepulting_location?: {
     name?: string;
   };
+  company_id: string;
 }
 
 const Live: React.FC = () => {
@@ -95,6 +96,28 @@ const Live: React.FC = () => {
 
     api.get(`deceaseds/${queryId}`).then(response => {
       setDeceased(response.data);
+
+      console.log(response.data.company_id);
+
+      api
+        .get(
+          'images?name=378x372&company_id=ac2e61df-be19-4a1f-9ae0-b0385f1cc005',
+        )
+        .then(smallFileResponse => {
+          const { file } = smallFileResponse.data;
+
+          setRightImageFilename(file);
+        });
+
+      api
+        .get(
+          'images?name=378x372&company_id=ac2e61df-be19-4a1f-9ae0-b0385f1cc005',
+        )
+        .then(bigFileResponse => {
+          const { file } = bigFileResponse.data;
+
+          setLeftImageFilename(file);
+        });
     });
 
     api.get(`/messages/${queryId}`).then(response => {
@@ -102,18 +125,6 @@ const Live: React.FC = () => {
 
       setMessages(messagesResponse);
       scrollToLastMessage(true);
-    });
-
-    api.get('images?name=378x372').then(response => {
-      const { file } = response.data;
-
-      setRightImageFilename(file);
-    });
-
-    api.get('images?name=240x920').then(response => {
-      const { file } = response.data;
-
-      setLeftImageFilename(file);
     });
   }, [router.query.id]);
 

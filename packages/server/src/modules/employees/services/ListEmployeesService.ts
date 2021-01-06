@@ -6,6 +6,7 @@ import IEmployeesRepository from '../repositories/IEmployeesRepository';
 interface IRequest {
   userId: string;
   name?: string;
+  company_id: string;
 }
 
 @injectable()
@@ -18,21 +19,30 @@ class ListEmployeesService {
   public async execute({
     name,
     userId,
+    company_id,
   }: IRequest): Promise<Employee[] | undefined> {
     const user = await this.employeesRepository.findById(userId);
 
     let employees;
 
-    if (user?.role === 'administrador') {
+    if (user?.role === 'administrador' || user?.role === 'master') {
       if (!name) {
-        employees = await this.employeesRepository.findAll();
+        employees = await this.employeesRepository.findAllByCompany(company_id);
       } else {
-        employees = await this.employeesRepository.findByName(name);
+        employees = await this.employeesRepository.findByNameAndCompany(
+          name,
+          company_id,
+        );
       }
     } else if (!name) {
-      employees = await this.employeesRepository.findEmployees();
+      employees = await this.employeesRepository.findEmployeesbyCompany(
+        company_id,
+      );
     } else {
-      employees = await this.employeesRepository.findEmployeesByName(name);
+      employees = await this.employeesRepository.findEmployeesByNameAndCompany(
+        name,
+        company_id,
+      );
     }
 
     return employees;

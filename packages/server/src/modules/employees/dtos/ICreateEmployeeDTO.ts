@@ -3,4 +3,5 @@ export default interface ICreateEmployeeDTO {
   email: string;
   password: string;
   role?: string;
+  company_id: string;
 }

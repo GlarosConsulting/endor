@@ -42,9 +42,6 @@ class SocketIOWebSocketProvider implements IWebSocketProvider {
     connections[username] = socket_id;
 
     await this.cacheProvider.save(webSocketConfig.cacheKey, connections);
-
-    // console.log('\nNew connection in the channel, socket:', socket_id);
-    // console.log('Connections: ', connections);
   }
 
   public async disconnect(user_id: string): Promise<void> {
@@ -64,9 +61,6 @@ class SocketIOWebSocketProvider implements IWebSocketProvider {
     delete connections[user_id];
 
     await this.cacheProvider.save(webSocketConfig.cacheKey, connections);
-
-    // console.log('\nDisconnected socket:', connection);
-    // console.log('Connections: ', connections);
   }
 
   public async emit({ to, event, args }: IEmitDTO): Promise<void> {

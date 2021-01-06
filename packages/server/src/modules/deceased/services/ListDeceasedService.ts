@@ -5,6 +5,7 @@ import IDeceasedsRepository from '../repositories/IDeceasedsRepository';
 
 interface IRequest {
   name?: string;
+  company_id: string;
 }
 
 @injectable()
@@ -14,13 +15,19 @@ class CreateCustomerService {
     private deceasedsRepository: IDeceasedsRepository,
   ) {}
 
-  public async execute({ name }: IRequest): Promise<Deceased[] | undefined> {
+  public async execute({
+    name,
+    company_id,
+  }: IRequest): Promise<Deceased[] | undefined> {
     let deceaseds;
 
     if (!name) {
-      deceaseds = await this.deceasedsRepository.findAll();
+      deceaseds = await this.deceasedsRepository.findAllByCompany(company_id);
     } else {
-      deceaseds = await this.deceasedsRepository.findByName(name);
+      deceaseds = await this.deceasedsRepository.findByNameAndCompany(
+        name,
+        company_id,
+      );
     }
 
     return deceaseds;

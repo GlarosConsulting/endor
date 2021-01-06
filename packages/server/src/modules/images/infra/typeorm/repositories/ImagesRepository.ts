@@ -12,9 +12,12 @@ class ImagesRepository implements IImagesRepository {
     this.ormRepository = getRepository(Image);
   }
 
-  public async findByName(name: string): Promise<Image | undefined> {
+  public async findByNameAndCompany(
+    name: string,
+    company_id: string,
+  ): Promise<Image | undefined> {
     const image = await this.ormRepository.findOne({
-      where: { name },
+      where: { name, company_id },
     });
 
     return image;

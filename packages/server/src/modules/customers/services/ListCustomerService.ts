@@ -5,6 +5,7 @@ import ICustomersRepository from '../repositories/ICustomersRepository';
 
 interface IRequest {
   name?: string;
+  company_id: string;
 }
 
 @injectable()
@@ -14,13 +15,19 @@ class ListCustomerService {
     private customersRepository: ICustomersRepository,
   ) {}
 
-  public async execute({ name }: IRequest): Promise<Customer[] | undefined> {
+  public async execute({
+    name,
+    company_id,
+  }: IRequest): Promise<Customer[] | undefined> {
     let customers;
 
     if (!name) {
-      customers = await this.customersRepository.findAll();
+      customers = await this.customersRepository.findAllByCompany(company_id);
     } else {
-      customers = await this.customersRepository.findByName(name);
+      customers = await this.customersRepository.findByNameAndCompany(
+        name,
+        company_id,
+      );
     }
 
     return customers;

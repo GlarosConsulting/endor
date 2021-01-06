@@ -1,5 +1,13 @@
 import { Expose } from 'class-transformer';
-import { Entity, PrimaryGeneratedColumn, Column, Index } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
+
+import Company from '@modules/companies/infra/typeorm/entities/Company';
 
 @Entity('images')
 export default class Funerals {
@@ -7,7 +15,6 @@ export default class Funerals {
   id: string;
 
   @Column()
-  @Index({ unique: true })
   name: string;
 
   @Column()
@@ -19,4 +26,11 @@ export default class Funerals {
 
     return `${process.env.APP_API_URL}/files/${this.name}`;
   }
+
+  @Column()
+  company_id: string;
+
+  @ManyToOne(() => Company, company => company.cemeteries)
+  @JoinColumn({ name: 'company_id' })
+  company: Company;
 }

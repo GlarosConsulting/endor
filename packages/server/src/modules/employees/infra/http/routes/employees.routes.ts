@@ -9,12 +9,14 @@ const employeesController = new EmployeesController();
 
 employeesRouter.post(
   '/',
+  ensureAuthenticated,
   celebrate({
     [Segments.BODY]: {
       name: Joi.string().required(),
       role: Joi.string(),
       email: Joi.string().email().required(),
       password: Joi.string().min(6).required(),
+      company_id: Joi.string().uuid(),
     },
   }),
   employeesController.create,

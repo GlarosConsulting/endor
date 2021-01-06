@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import {
   Button,
@@ -18,6 +18,8 @@ import * as Yup from 'yup';
 
 import Input from '@/components/Input';
 import Select from '@/components/Select';
+import { useAuthentication } from '@/hooks/authentication';
+import ICompany from '@/interfaces/Company';
 import getValidationErrors from '@/utils/getValidationErrors';
 
 import api from '../../../services/api';
@@ -40,18 +42,44 @@ interface ICreateFuneralsModalProps {
     reason?: 'pressedEscape' | 'clickedOverlay',
   ) => void;
   onSave: () => void;
-  cemeteries: ICemeteries[];
 }
 
 const CreateFuneralsModal: React.FC<ICreateFuneralsModalProps> = ({
   isOpen,
   onClose,
   onSave,
-  cemeteries,
 }) => {
   const formRef = useRef<FormHandles>(null);
 
+  const { user } = useAuthentication();
+
   const toast = useToast();
+
+  const [companies, setCompanies] = useState<ICompany[]>([] as ICompany[]);
+  const [isFuneral, setIsFuneral] = useState<boolean>(true);
+  const [cemeteries, setCemeteries] = useState<ICemeteries[]>(
+    [] as ICemeteries[],
+  );
+
+  useEffect(() => {
+    if (user?.company_id) {
+      api.get(`companies/${user.company_id}`).then(response => {
+        const company = response.data;
+
+        setIsFuneral(company.isFuneral);
+
+        if (!company.isFuneral) {
+          api.get('companies').then(companiesResponse => {
+            const companiesData = companiesResponse.data.filter(
+              data => data.isFuneral,
+            );
+
+            setCompanies(companiesData);
+          });
+        }
+      });
+    }
+  }, [user, isFuneral]);
 
   const handleSubmit = useCallback(async (data: IFormData, event) => {
     try {
@@ -61,6 +89,9 @@ const CreateFuneralsModal: React.FC<ICreateFuneralsModalProps> = ({
         name: Yup.string().required('Nome obrigatório'),
         url_cam: Yup.string().required('Link da camêra obrigatório'),
         cemetery_id: Yup.string().uuid().required('Cemitério obrigatório'),
+        company_id: !isFuneral
+          ? Yup.string().uuid().required('Nome obrigatório')
+          : Yup.string().uuid(),
       });
 
       await schema.validate(data, { abortEarly: false });
@@ -95,6 +126,25 @@ const CreateFuneralsModal: React.FC<ICreateFuneralsModalProps> = ({
     }
   }, []);
 
+  const handleCompanyChange = useCallback(
+    async e => {
+      const selected = e.target.value;
+
+      if (!selected) {
+        setCemeteries([]);
+
+        return;
+      }
+
+      const response = await api.get(`/cemeteries/?company_id=${selected}`);
+
+      const cemeteriesResponse = response.data;
+
+      setCemeteries(cemeteriesResponse);
+    },
+    [setCemeteries],
+  );
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -106,6 +156,24 @@ const CreateFuneralsModal: React.FC<ICreateFuneralsModalProps> = ({
         <Form ref={formRef} onSubmit={handleSubmit}>
           <ModalBody paddingBottom={4}>
             <Flex>
+              {!isFuneral && (
+                <Select
+                  backgroundColor="White"
+                  name="company_id"
+                  placeholder="Selecione a funerária"
+                  onChange={handleCompanyChange}
+                  containerProps={{
+                    marginRight: '16px',
+                    border: '1px solid',
+                    borderColor: 'gray.400',
+                    bg: 'white',
+                  }}
+                >
+                  {companies.map(company => (
+                    <option value={company.id}>{company.name}</option>
+                  ))}
+                </Select>
+              )}
               <Input
                 name="name"
                 placeholder="Nome"
@@ -126,6 +194,7 @@ const CreateFuneralsModal: React.FC<ICreateFuneralsModalProps> = ({
                 }}
               />
               <Select
+                isDisabled={!(cemeteries.length > 0)}
                 backgroundColor="White"
                 name="cemetery_id"
                 placeholder="Selecione o cemitério"

@@ -5,6 +5,7 @@ import ICemeteriesRepository from '../repositories/ICemeteriesRepository';
 
 interface IRequest {
   name?: string;
+  company_id: string;
 }
 
 @injectable()
@@ -14,13 +15,16 @@ class ListAllCemeteryService {
     private cemeteryRepository: ICemeteriesRepository,
   ) {}
 
-  public async execute({ name }: IRequest): Promise<Cemetery[] | undefined> {
+  public async execute({
+    company_id,
+    name,
+  }: IRequest): Promise<Cemetery[] | undefined> {
     let cemeteries;
 
     if (!name) {
-      cemeteries = await this.cemeteryRepository.findAll();
+      cemeteries = await this.cemeteryRepository.findByCompany(company_id);
     } else {
-      cemeteries = await this.cemeteryRepository.findByName(name);
+      cemeteries = await this.cemeteryRepository.findByName(name, company_id);
     }
     return cemeteries;
   }

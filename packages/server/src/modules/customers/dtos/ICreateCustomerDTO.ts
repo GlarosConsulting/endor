@@ -5,4 +5,5 @@ export default interface ICreateCustomerDTO {
   gender: string;
   cpf: string;
   birth_date: Date;
+  company_id: string;
 }

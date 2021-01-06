@@ -12,6 +12,7 @@ interface IRequest {
   gender: string;
   cpf: string;
   birth_date: Date;
+  company_id: string;
 }
 
 @injectable()
@@ -28,8 +29,12 @@ class CreateCustomerService {
     gender,
     cpf,
     birth_date,
+    company_id,
   }: IRequest): Promise<Customer> {
-    const checkEmailExists = await this.customersRepository.findByEmail(email);
+    const checkEmailExists = await this.customersRepository.findByEmail(
+      company_id,
+      email,
+    );
 
     if (checkEmailExists) {
       throw new AppError('Email address already used.');
@@ -42,6 +47,7 @@ class CreateCustomerService {
       gender,
       cpf,
       birth_date,
+      company_id,
     });
 
     return customer;

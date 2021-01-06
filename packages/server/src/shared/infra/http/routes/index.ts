@@ -2,6 +2,7 @@ import { Router } from 'express';
 
 import cemeteriesRouter from '@modules/cemeteries/infra/http/routes/cemeteries.routes';
 import messagesRouter from '@modules/chat/infra/http/routes/messages.routes';
+import companiesRouter from '@modules/companies/infra/http/routes/companies.routes';
 import customersRouter from '@modules/customers/infra/http/routes/customers.routes';
 import deceasedsRouter from '@modules/deceased/infra/http/routes/deceased.routes';
 import employeesRouter from '@modules/employees/infra/http/routes/employees.routes';
@@ -13,6 +14,7 @@ import imagesRouter from '@modules/images/infra/http/routes/images.routes';
 const routes = Router();
 
 routes.use('/cemeteries', cemeteriesRouter);
+routes.use('/companies', companiesRouter);
 routes.use('/customers', customersRouter);
 routes.use('/deceaseds', deceasedsRouter);
 routes.use('/employees', employeesRouter);

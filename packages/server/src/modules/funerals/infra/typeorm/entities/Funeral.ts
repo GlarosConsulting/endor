@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 
 import Cemetery from '../../../../cemeteries/infra/typeorm/entities/Cemetery';
+import Company from '../../../../companies/infra/typeorm/entities/Company';
 import Deceased from '../../../../deceased/infra/typeorm/entities/Deceased';
 
 @Entity('funerals')
@@ -22,6 +23,13 @@ export default class Funerals {
 
   @Column()
   url_cam: string;
+
+  @Column()
+  company_id: string;
+
+  @ManyToOne(() => Company, company => company.cemeteries)
+  @JoinColumn({ name: 'company_id' })
+  company: Company;
 
   @Column()
   cemetery_id: string;

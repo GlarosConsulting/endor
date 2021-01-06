@@ -13,7 +13,7 @@ class DeceasedsRepository implements IDeceasedsRepository {
     this.ormRepository = getRepository(Deceased);
   }
 
-  public async findByName(name: string): Promise<Deceased[] | undefined> {
+  public async findAllByName(name: string): Promise<Deceased[] | undefined> {
     const deceased = await this.ormRepository.find({
       where: { name: Like(`%${name}%`) },
       relations: [
@@ -27,9 +27,47 @@ class DeceasedsRepository implements IDeceasedsRepository {
     return deceased;
   }
 
+  public async findByNameAndCompany(
+    name: string,
+    company_id: string,
+  ): Promise<Deceased[] | undefined> {
+    const deceased = await this.ormRepository.find({
+      where: { name: Like(`%${name}%`), company_id },
+      relations: [
+        'responsible',
+        'funeral_location',
+        'funeral_location.cemetery',
+        'sepulting_location',
+      ],
+    });
+
+    return deceased;
+  }
+
   public async findAll(): Promise<Deceased[] | undefined> {
     const deceaseds = await this.ormRepository.find({
-      where: { funeral_final_date: MoreThan(formatISO(Date.now())) },
+      where: {
+        funeral_final_date: MoreThan(formatISO(Date.now())),
+      },
+      relations: [
+        'responsible',
+        'funeral_location',
+        'funeral_location.cemetery',
+        'sepulting_location',
+      ],
+    });
+
+    return deceaseds;
+  }
+
+  public async findAllByCompany(
+    company_id: string,
+  ): Promise<Deceased[] | undefined> {
+    const deceaseds = await this.ormRepository.find({
+      where: {
+        funeral_final_date: MoreThan(formatISO(Date.now())),
+        company_id,
+      },
       relations: [
         'responsible',
         'funeral_location',

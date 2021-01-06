@@ -20,7 +20,7 @@ class CemeteriesRepository implements ICemeteriesRepository {
     return cemeteries;
   }
 
-  public async findByName(name: string): Promise<Cemetery[] | undefined> {
+  public async findAllByName(name: string): Promise<Cemetery[] | undefined> {
     const cemeteries = await this.ormRepository.find({
       where: { name: Like(`%${name}%`) },
       relations: ['funerals'],
@@ -29,8 +29,36 @@ class CemeteriesRepository implements ICemeteriesRepository {
     return cemeteries;
   }
 
-  public async findById(id: string): Promise<Cemetery | undefined> {
-    const cemetery = await this.ormRepository.findOne(id);
+  public async findByCompany(
+    company_id: string,
+  ): Promise<Cemetery[] | undefined> {
+    const cemeteries = await this.ormRepository.find({
+      where: { company_id },
+      relations: ['funerals'],
+    });
+
+    return cemeteries;
+  }
+
+  public async findByName(
+    name: string,
+    company_id: string,
+  ): Promise<Cemetery[] | undefined> {
+    const cemeteries = await this.ormRepository.find({
+      where: { name: Like(`%${name}%`), company_id },
+      relations: ['funerals'],
+    });
+
+    return cemeteries;
+  }
+
+  public async findById(
+    id: string,
+    company_id: string,
+  ): Promise<Cemetery | undefined> {
+    const cemetery = await this.ormRepository.findOne(id, {
+      where: { company_id },
+    });
 
     return cemetery;
   }

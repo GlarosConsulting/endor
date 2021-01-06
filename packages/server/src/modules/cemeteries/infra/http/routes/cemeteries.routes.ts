@@ -13,6 +13,7 @@ cemeteriesRouter.get(
   celebrate({
     [Segments.QUERY]: {
       name: Joi.string().allow(null),
+      company_id: Joi.string().allow(null),
     },
   }),
   cemeteriesController.index,
@@ -24,6 +25,7 @@ cemeteriesRouter.post(
   celebrate({
     [Segments.BODY]: {
       name: Joi.string().required(),
+      company_id: Joi.string().uuid(),
     },
   }),
   cemeteriesController.create,

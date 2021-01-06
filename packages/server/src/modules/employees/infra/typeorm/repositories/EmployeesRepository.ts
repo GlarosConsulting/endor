@@ -19,14 +19,33 @@ class EmnployeesRepository implements IEmployeesRepository {
   }
 
   public async findAll(): Promise<Employee[] | undefined> {
-    const employee = await this.ormRepository.find();
+    const employee = await this.ormRepository.find({ where: {} });
 
     return employee;
   }
 
-  public async findByName(name: string): Promise<Employee[] | undefined> {
+  public async findAllByCompany(
+    company_id: string,
+  ): Promise<Employee[] | undefined> {
+    const employee = await this.ormRepository.find({ where: { company_id } });
+
+    return employee;
+  }
+
+  public async findAllByName(name: string): Promise<Employee[] | undefined> {
     const employee = await this.ormRepository.find({
       where: { name: Like(`%${name}%`) },
+    });
+
+    return employee;
+  }
+
+  public async findByNameAndCompany(
+    name: string,
+    company_id: string,
+  ): Promise<Employee[] | undefined> {
+    const employee = await this.ormRepository.find({
+      where: { name: Like(`%${name}%`), company_id },
     });
 
     return employee;
@@ -36,6 +55,34 @@ class EmnployeesRepository implements IEmployeesRepository {
     const employee = await this.ormRepository.find({
       where: {
         role: 'funcionario',
+      },
+    });
+
+    return employee;
+  }
+
+  public async findEmployeesbyCompany(
+    company_id: string,
+  ): Promise<Employee[] | undefined> {
+    const employee = await this.ormRepository.find({
+      where: {
+        role: 'funcionario',
+        company_id,
+      },
+    });
+
+    return employee;
+  }
+
+  public async findEmployeesByNameAndCompany(
+    name: string,
+    company_id: string,
+  ): Promise<Employee[] | undefined> {
+    const employee = await this.ormRepository.find({
+      where: {
+        name: Like(`%${name}%`),
+        role: 'funcionario',
+        company_id,
       },
     });
 
