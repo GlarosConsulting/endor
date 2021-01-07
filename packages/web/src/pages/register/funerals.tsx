@@ -339,7 +339,6 @@ const Funerals: React.FC = () => {
                 onSave={getFunerals}
                 isOpen={isCreateFuneralsOpen}
                 onClose={onCloseCreateFunerals}
-                cemeteries={cemeteries}
               />
 
               <UpdateFuneralsModal

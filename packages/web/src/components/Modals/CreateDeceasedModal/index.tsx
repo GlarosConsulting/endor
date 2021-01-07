@@ -116,6 +116,12 @@ const CreateDeceasedModal: React.FC<ICreateDeceasedModalProps> = ({
 
             setCemeteries(cemeteriesData);
           });
+
+          api.get('customers').then(customersResponse => {
+            const customersData: ICemetery[] = customersResponse.data;
+
+            setCustomers(customersData);
+          });
         }
       });
     }
@@ -123,12 +129,6 @@ const CreateDeceasedModal: React.FC<ICreateDeceasedModalProps> = ({
     setRequestStatus(null);
 
     setFunerals([] as IFuneral[]);
-
-    api.get('customers').then(response => {
-      const customersResponse: ICemetery[] = response.data;
-
-      setCustomers(customersResponse);
-    });
   }, []);
 
   const handleSubmit = useCallback(async (data: IFormData, event) => {
@@ -290,15 +290,23 @@ const CreateDeceasedModal: React.FC<ICreateDeceasedModalProps> = ({
       if (!selected) {
         setCemeteries([]);
         setFunerals([]);
+        setCustomers([]);
 
         return;
       }
 
-      const response = await api.get(`/cemeteries/?company_id=${selected}`);
+      const cemeteriesResponse = await api.get(
+        `/cemeteries/?company_id=${selected}`,
+      );
+      const customersResponse = await api.get(
+        `/customers/?company_id=${selected}`,
+      );
 
-      const cemeteriesResponse = response.data;
+      const cemeteriesData = cemeteriesResponse.data;
+      const customersData = customersResponse.data;
 
-      setCemeteries(cemeteriesResponse);
+      setCemeteries(cemeteriesData);
+      setCustomers(customersData);
     },
     [setCemeteries],
   );
@@ -364,6 +372,7 @@ const CreateDeceasedModal: React.FC<ICreateDeceasedModalProps> = ({
               <Select
                 name="responsible_id"
                 placeholder="Cliente responsável"
+                isDisabled={!(customers.length > 0)}
                 bg="white"
                 containerProps={{
                   marginLeft: 4,
@@ -426,6 +435,7 @@ const CreateDeceasedModal: React.FC<ICreateDeceasedModalProps> = ({
               <Select
                 name="sepulting_location_id"
                 placeholder="Local do sepultamento"
+                isDisabled={!(cemeteries.length > 0)}
                 bg="white"
                 containerProps={{
                   marginTop: 3,

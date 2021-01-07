@@ -80,9 +80,7 @@ const ImagesSettings: React.FC = () => {
 
       const formData = new FormData();
 
-      if (!isFuneral) {
-        formData.append('company_id', data.company_id);
-      }
+      formData.append('company_id', data.company_id);
 
       formData.append('file', data.file);
       formData.append('name', data.name);
