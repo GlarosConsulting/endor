@@ -25,11 +25,10 @@ imagesRouter.post(
 
 imagesRouter.get(
   '/',
-  ensureAuthenticated,
   celebrate({
     [Segments.QUERY]: {
       name: Joi.string(),
-      company_id: Joi.string().allow(null),
+      company_id: Joi.string(),
     },
   }),
   findImageByName.show,

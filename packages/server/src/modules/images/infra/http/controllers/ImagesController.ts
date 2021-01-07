@@ -36,7 +36,6 @@ export default class ImagesController {
     if (!company.isFuneral) {
       company_id = request.body.company_id;
     }
-
     const companyByBodyId = await companiesRepository.findById(company_id);
 
     if (!companyByBodyId?.isFuneral) {

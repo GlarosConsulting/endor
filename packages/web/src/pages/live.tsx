@@ -97,12 +97,8 @@ const Live: React.FC = () => {
     api.get(`deceaseds/${queryId}`).then(response => {
       setDeceased(response.data);
 
-      console.log(response.data.company_id);
-
       api
-        .get(
-          'images?name=378x372&company_id=ac2e61df-be19-4a1f-9ae0-b0385f1cc005',
-        )
+        .get(`images?name=378x372&company_id=${response.data.company_id}`)
         .then(smallFileResponse => {
           const { file } = smallFileResponse.data;
 
@@ -110,9 +106,7 @@ const Live: React.FC = () => {
         });
 
       api
-        .get(
-          'images?name=378x372&company_id=ac2e61df-be19-4a1f-9ae0-b0385f1cc005',
-        )
+        .get(`images?name=378x372&company_id=${response.data.company_id}`)
         .then(bigFileResponse => {
           const { file } = bigFileResponse.data;
 
